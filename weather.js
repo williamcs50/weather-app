@@ -42,6 +42,21 @@ async function fetchForecast(city, state) {
 // ── RENDER ─────────────────────────────────────────────────────────────
 // These functions only read data and write to the DOM. No fetch calls here.
 
+// isDaytime keeps nighttime "Clear" from mapping to ☀️
+function getEmoji(shortForecast, isDaytime) {
+  const f = shortForecast.toLowerCase();
+  if (f.includes('thunder'))                              return '⛈️';
+  if (f.includes('blizzard') || f.includes('snow'))       return '🌨️';
+  if (f.includes('sleet') || f.includes('freezing'))      return '🌧️';
+  if (f.includes('rain') || f.includes('shower') || f.includes('drizzle')) return '🌧️';
+  if (f.includes('fog') || f.includes('haze'))            return '🌫️';
+  if (f.includes('mostly sunny') || f.includes('partly cloudy')) return isDaytime ? '⛅' : '🌙';
+  if (f.includes('sunny') || f.includes('clear') || f.includes('fair')) return isDaytime ? '☀️' : '🌙';
+  if (f.includes('mostly cloudy') || f.includes('overcast')) return '🌥️';
+  if (f.includes('cloudy'))                               return '☁️';
+  return isDaytime ? '🌡️' : '🌙';
+}
+
 function renderError(message) {
   document.getElementById('results').innerHTML =
     `<p class="error">${message}</p>`;
@@ -55,6 +70,7 @@ function renderForecast(periods, city, state) {
 
   const upcomingHtml = upcoming.map(p => `
     <div class="period">
+      <span class="period-emoji">${getEmoji(p.shortForecast, p.isDaytime)}</span>
       <strong>${p.name}</strong>
       <span class="temp">${p.temperature}°${p.temperatureUnit}</span>
       <p>${p.shortForecast}</p>
@@ -64,7 +80,7 @@ function renderForecast(periods, city, state) {
   document.getElementById('results').innerHTML = `
     <h2>${city}, ${state}</h2>
     <div class="current">
-      <h3>${current.name}</h3>
+      <h3>${getEmoji(current.shortForecast, current.isDaytime)} ${current.name}</h3>
       <p class="temp-large">${current.temperature}°${current.temperatureUnit}</p>
       <p>${current.detailedForecast}</p>
     </div>
