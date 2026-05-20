@@ -1,0 +1,111 @@
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: system-ui, sans-serif;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 2rem 1rem 4rem;
+  color: #1a1a1a;
+  background: #f5f7fa;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-bottom: 1.25rem;
+  color: #111;
+}
+
+form {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.75rem;
+}
+
+input {
+  padding: 0.55rem 0.75rem;
+  font-size: 1rem;
+  border: 1px solid #d0d5dd;
+  border-radius: 6px;
+  background: #fff;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+input:focus { border-color: #1a73e8; }
+
+#city  { flex: 2; min-width: 140px; }
+#state { flex: 1; min-width: 80px; }
+
+button {
+  padding: 0.55rem 1.1rem;
+  font-size: 1rem;
+  background: #1a73e8;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+button:hover { background: #1558b0; }
+
+#status { color: #666; margin-bottom: 1rem; font-size: 0.95rem; }
+
+#results h2 {
+  font-size: 1.2rem;
+  margin-bottom: 0.75rem;
+  color: #333;
+}
+
+.current {
+  background: #fff;
+  border: 1px solid #e0e4ea;
+  border-radius: 8px;
+  padding: 1.1rem 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.current h3 { margin: 0 0 0.25rem; font-size: 1rem; color: #555; }
+
+.temp-large {
+  font-size: 2.75rem;
+  font-weight: 700;
+  margin: 0.1rem 0 0.5rem;
+  letter-spacing: -0.02em;
+}
+
+.current p { margin: 0; font-size: 0.9rem; color: #444; line-height: 1.5; }
+
+h3 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: #888; margin: 0 0 0.6rem; }
+
+.forecast-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 0.6rem;
+}
+
+.period {
+  background: #fff;
+  border: 1px solid #e0e4ea;
+  border-radius: 8px;
+  padding: 0.75rem;
+}
+
+.period-emoji { font-size: 1.4rem; display: block; margin-bottom: 0.2rem; }
+.period strong { font-size: 0.85rem; color: #333; display: block; margin-bottom: 0.15rem; }
+.period .temp { font-size: 1.15rem; font-weight: 700; display: block; margin-bottom: 0.2rem; }
+.period p { margin: 0; font-size: 0.8rem; color: #666; line-height: 1.4; }
+
+.error { color: #c0392b; }
+
+footer {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e0e4ea;
+  font-size: 0.8rem;
+  color: #999;
+}
