@@ -3,9 +3,88 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Weather App</title>
+  <title>NWS Weather</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 640px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+      color: #1a1a1a;
+    }
+
+    form {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+
+    input {
+      padding: 0.5rem 0.75rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    #city  { flex: 2; min-width: 140px; }
+    #state { flex: 1; min-width: 80px; }
+
+    button {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      background: #1a73e8;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover { background: #1558b0; }
+
+    #status { color: #555; margin-bottom: 1rem; }
+
+    .current {
+      background: #f0f4ff;
+      border-radius: 6px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .temp-large {
+      font-size: 2.5rem;
+      font-weight: bold;
+      margin: 0.25rem 0;
+    }
+
+    .forecast-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .period {
+      background: #f9f9f9;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      padding: 0.75rem;
+    }
+
+    .period .temp { font-size: 1.2rem; font-weight: bold; display: block; margin: 0.25rem 0; }
+    .period p { margin: 0; font-size: 0.9rem; color: #444; }
+
+    .error { color: #c0392b; }
+  </style>
 </head>
 <body>
-  <h1>Weather app — coming soon</h1>
+  <h1>US Weather Forecast</h1>
+  <form id="weather-form">
+    <input type="text" id="city"  placeholder="City"       required />
+    <input type="text" id="state" placeholder="State (IL)" required />
+    <button type="submit">Get Forecast</button>
+  </form>
+  <div id="status"></div>
+  <div id="results"></div>
+  <script src="weather.js"></script>
 </body>
 </html>
