@@ -100,6 +100,51 @@ h3 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; colo
 .period .temp { font-size: 1.15rem; font-weight: 700; display: block; margin-bottom: 0.2rem; }
 .period p { margin: 0; font-size: 0.8rem; color: #666; line-height: 1.4; }
 
+.comparison-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+}
+
+.comparison-card {
+  background: #fff;
+  border: 1px solid #e0e4ea;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.comparison-card-header {
+  background: #f0f4ff;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.comparison-card-body {
+  padding: 0.6rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.comparison-source {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+}
+
+.source-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #888;
+}
+
+.source-temp { font-weight: 700; }
+
 .error { color: #c0392b; }
 
 footer {
