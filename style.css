@@ -179,6 +179,10 @@ h3 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; colo
 .leg-aifs { color: #2e7d52; }
 .leg-dm   { color: #9e9e9e; }
 
+.model-nws  { color: #1a73e8; }
+.model-aifs { color: #2e7d52; }
+.model-dm   { color: #7c3aed; }
+
 /* ── CONFIDENCE CARDS ─────────────────────────────────────────────── */
 
 .conf-cards {
@@ -224,8 +228,8 @@ h3 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; colo
   margin-top: 1rem;
 }
 
-.decay-card    { background: #f9f9f9; border: 1px solid #e0e4ea; border-radius: 6px; padding: 0.65rem 0.75rem; }
-.decay-card-dm { opacity: 0.5; }
+.decay-card    { background: #f9f9f9; border: 1px solid #e0e4ea; border-radius: 6px; padding: 0.65rem 0.75rem; text-align: center; }
+.decay-card-dm { opacity: 0.7; }
 .decay-model   { font-size: 0.8rem; font-weight: 600; margin-bottom: 0.15rem; color: #555; }
 .decay-label   { font-size: 0.78rem; color: #444; }
 .decay-range   { font-size: 0.75rem; color: #888; margin-top: 0.1rem; }
@@ -275,7 +279,8 @@ h3 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; colo
   gap: 0.75rem;
 }
 
-.score-card       { background: #f9f9f9; border: 1px solid #e0e4ea; border-radius: 8px; padding: 0.85rem 1rem; }
+.score-card       { border: 1px solid #e0e4ea; border-radius: 8px; padding: 0.85rem 1rem; }
+.score-card-nws   { background: linear-gradient(135deg, #e8f0fe 0%, #f8fbff 100%); }
 .score-card-aifs  { background: linear-gradient(135deg, #e6f4ea 0%, #f6fdf7 100%); }
 .score-card-dm    { background: linear-gradient(135deg, #ede9fe 0%, #f5f3ff 100%); opacity: 0.7; }
 .score-src        { font-size: 0.82rem; font-weight: 600; color: #333; margin-bottom: 0.3rem; }

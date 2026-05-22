@@ -48,6 +48,12 @@ function deriveShortForecast(precipMm) {
   return 'Heavy Rain';
 }
 
+function hasPrecip(shortForecast) {
+  const f = shortForecast.toLowerCase();
+  return f.includes('rain') || f.includes('shower') || f.includes('drizzle') ||
+         f.includes('snow') || f.includes('sleet');
+}
+
 function parseAIFSPeriods(data) {
   const times  = data.hourly.time;
   const temps  = data.hourly.temperature_2m;
@@ -408,8 +414,9 @@ function renderDecayChart(nwsPeriods, aifsPeriods) {
   const aifsCenter = nwsPeriods.map(p => aifsByName[p.name]?.temperature ?? null);
   const nwsUpper   = nwsCenter.map((t, i) => t + 2 + i * 0.35);
   const nwsLower   = nwsCenter.map((t, i) => t - 2 - i * 0.35);
-  const aifsUpper  = aifsCenter.map((t, i) => t != null ? t + 1 + i * 0.28 : null);
-  const aifsLower  = aifsCenter.map((t, i) => t != null ? t - 1 - i * 0.28 : null);
+  // AIFS: confidence cliff — stays tight through day 3, then widens sharply
+  const aifsUpper  = aifsCenter.map((t, i) => t != null ? t + 1 + Math.max(0, i - 3) * 0.7 : null);
+  const aifsLower  = aifsCenter.map((t, i) => t != null ? t - 1 - Math.max(0, i - 3) * 0.7 : null);
 
   const ctx = document.getElementById('decay-chart').getContext('2d');
   decayChart = new Chart(ctx, {
@@ -442,17 +449,17 @@ function renderDecayChart(nwsPeriods, aifsPeriods) {
   const n = nwsPeriods.length - 1;
   document.getElementById('decay-annotations').innerHTML = `
     <div class="decay-card">
-      <div class="decay-model" style="color:#1a73e8">NWS</div>
+      <div class="decay-model model-nws">NWS</div>
       <div class="decay-label">Steady growth</div>
       <div class="decay-range">±2°→±${Math.round(2 + n * 0.35)}°</div>
     </div>
     <div class="decay-card">
-      <div class="decay-model" style="color:#2e7d52">AIFS</div>
-      <div class="decay-label">Stays tight</div>
-      <div class="decay-range">±1°→±${Math.round(1 + n * 0.28)}°</div>
+      <div class="decay-model model-aifs">AIFS</div>
+      <div class="decay-label">Cliff at day 3</div>
+      <div class="decay-range">±1°→±${Math.round(1 + Math.max(0, n - 3) * 0.7)}°</div>
     </div>
     <div class="decay-card decay-card-dm">
-      <div class="decay-model">DeepMind</div>
+      <div class="decay-model model-dm">DeepMind</div>
       <div class="decay-label">v3 pending</div>
     </div>
   `;
@@ -464,16 +471,32 @@ function renderStormTracker(nwsPeriods, aifsPeriods) {
 
   const alerts = nwsPeriods
     .map((nws, i) => ({ nws, aifs: aifsByName[nws.name], i }))
-    .filter(({ nws, aifs }) => aifs && Math.abs(nws.temperature - aifs.temperature) >= THRESHOLD)
+    .filter(({ nws, aifs }) => {
+      if (!aifs) return false;
+      const tempDiff      = Math.abs(nws.temperature - aifs.temperature);
+      const precipMismatch = hasPrecip(nws.shortForecast) !== hasPrecip(aifs.shortForecast);
+      return tempDiff >= THRESHOLD || precipMismatch;
+    })
     .map(({ nws, aifs, i }) => {
-      const diff       = Math.abs(nws.temperature - aifs.temperature);
-      const hoursAhead = (i + 1) * 12;
+      const tempDiff       = Math.abs(nws.temperature - aifs.temperature);
+      const precipMismatch = hasPrecip(nws.shortForecast) !== hasPrecip(aifs.shortForecast);
+      const hoursAhead     = (i + 1) * 12;
+
+      let detail = '';
+      if (tempDiff >= THRESHOLD) {
+        detail += `NWS predicts ${nws.temperature}°F; AIFS predicts ${aifs.temperature}°F — ${tempDiff}°F divergence`;
+      }
+      if (precipMismatch) {
+        if (detail) detail += '. ';
+        detail += `NWS: ${nws.shortForecast}; AIFS: ${aifs.shortForecast}`;
+      }
+
       return `
         <div class="storm-alert">
           <span class="storm-icon">⚠️</span>
           <div class="storm-body">
             <div class="storm-title">${nws.name}</div>
-            <div class="storm-detail">NWS predicts ${nws.temperature}°F; AIFS predicts ${aifs.temperature}°F — ${diff}°F divergence</div>
+            <div class="storm-detail">${detail}</div>
           </div>
           <div class="storm-time">in ${hoursAhead}h</div>
         </div>`;
@@ -492,7 +515,7 @@ function renderScoreboard(accuracy) {
     return;
   }
   el.innerHTML = `
-    <div class="score-card">
+    <div class="score-card score-card-nws">
       <div class="score-src">NWS <span class="score-sub">(via GFS)</span></div>
       <div class="score-pct">${accuracy.nws ?? '—'}%</div>
       <div class="score-label">within ±2°F · ${accuracy.nwsDays} days</div>
@@ -503,7 +526,7 @@ function renderScoreboard(accuracy) {
       <div class="score-label">within ±2°F · ${accuracy.aifsDays} days</div>
     </div>
     <div class="score-card score-card-dm">
-      <div class="score-src" style="color:#aaa">DeepMind</div>
+      <div class="score-src model-dm">DeepMind</div>
       <div class="score-pct score-pct-dm">—</div>
       <div class="score-label">v3 · accumulates from access</div>
     </div>
