@@ -170,6 +170,13 @@ h3 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; colo
 .section-subtitle { font-size: 0.82rem; color: #888; margin-bottom: 1rem; }
 .section-meta    { font-size: 0.75rem; color: #aaa; }
 
+.alert-badge {
+  font-size: 0.65rem; font-weight: 700;
+  letter-spacing: 0.04em; padding: 0.2rem 0.6rem;
+  border-radius: 20px; text-transform: uppercase;
+  background: #fffbf0; color: #92400e; border: 1px solid #f0d080;
+}
+
 /* ── CHARTS ───────────────────────────────────────────────────────── */
 
 .chart-wrap { position: relative; width: 100%; }
@@ -261,7 +268,7 @@ h3 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; colo
 .storm-alert  {
   display: flex; align-items: flex-start; gap: 0.75rem;
   padding: 0.75rem; margin-bottom: 0.5rem;
-  background: #fffbf0; border: 1px solid #f0d080; border-radius: 6px;
+  background: #f9f9f9; border: 1px solid #e0e4ea; border-radius: 6px;
 }
 
 .storm-icon   { font-size: 1rem; flex-shrink: 0; margin-top: 0.1rem; }

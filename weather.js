@@ -261,7 +261,10 @@ function renderForecast(nwsPeriods, aifsPeriods, city, state) {
     </section>
 
     <section class="feature-section">
-      <div class="section-title">Storm tracker — model divergence alerts</div>
+      <div class="section-header-row">
+        <div class="section-title">Storm tracker — model divergence alerts</div>
+        <div class="section-meta" id="storm-count"></div>
+      </div>
       <div id="storm-alerts"></div>
     </section>
 
@@ -505,6 +508,11 @@ function renderStormTracker(nwsPeriods, aifsPeriods) {
   document.getElementById('storm-alerts').innerHTML = alerts.length
     ? alerts.join('')
     : '<p class="no-alerts">Models agree — no significant divergence detected.</p>';
+
+  const countEl = document.getElementById('storm-count');
+  if (countEl) countEl.innerHTML = alerts.length
+    ? `<span class="alert-badge">${alerts.length} Alert${alerts.length !== 1 ? 's' : ''}</span>`
+    : '';
 }
 
 function renderScoreboard(accuracy) {
