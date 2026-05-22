@@ -3,11 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NWS Weather</title>
+  <title>NWS vs. AIFS Weather Forecast</title>
   <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 </head>
 <body>
-  <h1>US Weather Forecast</h1>
+  <h1>NWS vs. AIFS Weather Forecast</h1>
   <form id="weather-form">
     <input type="text" id="city"  placeholder="City"       required />
     <input type="text" id="state" placeholder="State (IL)" required />
@@ -16,7 +17,7 @@
   <div id="status"></div>
   <div id="results"></div>
   <footer>
-    William Opyrchal &middot; 2026 &middot; Forecast data from <a href="https://www.weather.gov" target="_blank" rel="noopener">National Weather Service</a>
+    William Opyrchal &middot; 2026 &middot; Forecast data from <a href="https://www.weather.gov" target="_blank" rel="noopener">National Weather Service</a> and <a href="https://open-meteo.com/" target="_blank" rel="noopener">ECMWF AIFS via Open-Meteo</a>
   </footer>
   <script src="weather.js"></script>
 </body>

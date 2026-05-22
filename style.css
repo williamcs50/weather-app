@@ -55,30 +55,34 @@ button:hover { background: #1558b0; }
 
 #status { color: #666; margin-bottom: 1rem; font-size: 0.95rem; }
 
-#results h2 {
-  font-size: 1.2rem;
-  margin-bottom: 0.75rem;
-  color: #333;
-}
 
 .current {
-  background: #fff;
-  border: 1px solid #e0e4ea;
-  border-radius: 8px;
-  padding: 1.1rem 1.25rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.75rem;
 }
 
-.current h3 { margin: 0 0 0.25rem; font-size: 1rem; color: #555; }
+.current-location {
+  font-size: 0.85rem;
+  color: #888;
+  margin-bottom: 0.3rem;
+}
+
+.current-period {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: #555;
+  margin-bottom: 0.25rem;
+}
 
 .temp-large {
-  font-size: 2.75rem;
+  font-size: 3rem;
   font-weight: 700;
   margin: 0.1rem 0 0.5rem;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
+  color: #111;
 }
 
-.current p { margin: 0; font-size: 0.9rem; color: #444; line-height: 1.5; }
+.current-detail { margin: 0; font-size: 0.88rem; color: #555; line-height: 1.55; max-width: 520px; }
 
 h3 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: #888; margin: 0 0 0.6rem; }
 
@@ -144,6 +148,142 @@ h3 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; colo
 }
 
 .source-temp { font-weight: 700; }
+
+/* ── FEATURE SECTIONS ─────────────────────────────────────────────── */
+
+.feature-section {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e0e4ea;
+}
+
+.section-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.section-title   { font-size: 1rem; font-weight: 600; color: #1a1a1a; margin-bottom: 0.2rem; }
+.section-subtitle { font-size: 0.82rem; color: #888; margin-bottom: 1rem; }
+.section-meta    { font-size: 0.75rem; color: #aaa; }
+
+/* ── CHARTS ───────────────────────────────────────────────────────── */
+
+.chart-wrap { position: relative; width: 100%; }
+
+.chart-legend { display: flex; gap: 1rem; font-size: 0.78rem; }
+.leg-nws  { color: #1a73e8; }
+.leg-aifs { color: #2e7d52; }
+.leg-dm   { color: #9e9e9e; }
+
+/* ── CONFIDENCE CARDS ─────────────────────────────────────────────── */
+
+.conf-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.conf-card {
+  border-radius: 8px;
+  padding: 0.85rem 1rem;
+  border: 1px solid #e0e4ea;
+}
+
+.conf-nws  { background: linear-gradient(135deg, #e8f0fe 0%, #f8fbff 100%); }
+.conf-aifs { background: linear-gradient(135deg, #e6f4ea 0%, #f6fdf7 100%); }
+.conf-dm   { background: linear-gradient(135deg, #ede9fe 0%, #f5f3ff 100%); }
+
+.conf-hdr  { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem; }
+.conf-src  { font-size: 0.85rem; font-weight: 600; }
+.conf-sub  { font-size: 0.72rem; font-weight: 400; color: #888; margin-left: 0.25rem; }
+
+.conf-badge {
+  font-size: 0.65rem; font-weight: 700;
+  letter-spacing: 0.04em; padding: 0.15rem 0.4rem;
+  border-radius: 3px; text-transform: uppercase;
+}
+
+.badge-high      { background: #e8f0fe; color: #1a73e8; }
+.badge-very-high { background: #e6f4ea; color: #2e7d52; }
+.badge-pending   { background: #ede9fe; color: #7c3aed; }
+
+.conf-temp        { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.15rem; }
+.conf-pending-val { color: #bbb; }
+.conf-range       { font-size: 0.78rem; color: #888; }
+
+/* ── DECAY ANNOTATIONS ────────────────────────────────────────────── */
+
+.decay-annotations {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+
+.decay-card    { background: #f9f9f9; border: 1px solid #e0e4ea; border-radius: 6px; padding: 0.65rem 0.75rem; }
+.decay-card-dm { opacity: 0.5; }
+.decay-model   { font-size: 0.8rem; font-weight: 600; margin-bottom: 0.15rem; color: #555; }
+.decay-label   { font-size: 0.78rem; color: #444; }
+.decay-range   { font-size: 0.75rem; color: #888; margin-top: 0.1rem; }
+
+/* ── SEQUENCE STEPS ───────────────────────────────────────────────── */
+
+.sequence-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.sequence-step   { background: #f9f9f9; border: 1px solid #e0e4ea; border-radius: 6px; padding: 0.75rem; }
+.sequence-step p { margin: 0.4rem 0 0; font-size: 0.8rem; color: #555; line-height: 1.4; }
+.step-hdr        { display: flex; align-items: center; gap: 0.4rem; }
+.step-time       { font-size: 0.78rem; color: #888; }
+
+.step-badge {
+  font-size: 0.65rem; font-weight: 700;
+  padding: 0.15rem 0.4rem; border-radius: 3px; text-transform: uppercase;
+}
+
+.badge-nws  { background: #e8f0fe; color: #1a73e8; }
+.badge-aifs { background: #e6f4ea; color: #2e7d52; }
+.badge-dm   { background: #ede9fe; color: #7c3aed; }
+
+/* ── STORM TRACKER ────────────────────────────────────────────────── */
+
+.storm-alert  {
+  display: flex; align-items: flex-start; gap: 0.75rem;
+  padding: 0.75rem; margin-bottom: 0.5rem;
+  background: #fffbf0; border: 1px solid #f0d080; border-radius: 6px;
+}
+
+.storm-icon   { font-size: 1rem; flex-shrink: 0; margin-top: 0.1rem; }
+.storm-body   { flex: 1; }
+.storm-title  { font-size: 0.88rem; font-weight: 600; margin-bottom: 0.2rem; }
+.storm-detail { font-size: 0.8rem; color: #555; }
+.storm-time   { font-size: 0.78rem; color: #888; white-space: nowrap; }
+.no-alerts    { font-size: 0.85rem; color: #888; margin: 0; }
+
+/* ── SCOREBOARD ───────────────────────────────────────────────────── */
+
+.scoreboard-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.score-card       { background: #f9f9f9; border: 1px solid #e0e4ea; border-radius: 8px; padding: 0.85rem 1rem; }
+.score-card-aifs  { background: linear-gradient(135deg, #e6f4ea 0%, #f6fdf7 100%); }
+.score-card-dm    { background: linear-gradient(135deg, #ede9fe 0%, #f5f3ff 100%); opacity: 0.7; }
+.score-src        { font-size: 0.82rem; font-weight: 600; color: #333; margin-bottom: 0.3rem; }
+.score-sub        { font-size: 0.72rem; font-weight: 400; color: #888; }
+.score-pct        { font-size: 2rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.15rem; }
+.score-pct-dm     { color: #bbb; }
+.score-label      { font-size: 0.75rem; color: #888; }
+.score-loading    { font-size: 0.85rem; color: #aaa; padding: 0.5rem 0; }
 
 .error { color: #c0392b; }
 
