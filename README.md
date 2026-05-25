@@ -6,6 +6,9 @@ This app shows side-by-side weather forecasts for US locations, comparing classi
 
 **Build mode.** Scoped as a rapid MVP to practice AI-assisted development as a discipline. I directed the design and verified each piece against the live page. AI did the heavy lifting in implementation. The verification process, reviewing the rendered output, catching errors, and integrating, was the practice.
 
+## Why this project
+
+Weather forecasting is in the middle of a transition. For decades, the field has run on physics-based numerical models like those from the National Weather Service. In the last two years, machine-learning models — ECMWF's AIFS, Google DeepMind's WeatherNext — have started matching or beating those physics models on multi-day forecasts. I wanted to see the diff for myself, on the same locations, side by side. The interesting questions live in the gap.
 
 ## Roadmap
 
