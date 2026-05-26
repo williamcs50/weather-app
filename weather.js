@@ -243,7 +243,7 @@ function renderForecast(nwsPeriods, aifsPeriods, city, state) {
 
     <section class="feature-section">
       <div class="section-header-row">
-        <div class="section-title">Storm tracker — model divergence alerts</div>
+        <div class="section-title">Model disagreements</div>
         <div class="section-meta" id="storm-count"></div>
       </div>
       <div id="storm-alerts"></div>
@@ -477,7 +477,7 @@ function renderStormTracker(nwsPeriods, aifsPeriods) {
 
       return `
         <div class="storm-alert">
-          <span class="storm-icon">⚠️</span>
+          <span class="storm-icon">ℹ️</span>
           <div class="storm-body">
             <div class="storm-title">${nws.name}</div>
             <div class="storm-detail">${detail}</div>
