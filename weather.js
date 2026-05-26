@@ -242,25 +242,6 @@ function renderForecast(nwsPeriods, aifsPeriods, city, state) {
     </section>
 
     <section class="feature-section">
-      <div class="section-title">Cinematic load sequence</div>
-      <div class="section-subtitle">Each model plots in sequence so the diff feels discovered</div>
-      <div class="sequence-steps">
-        <div class="sequence-step">
-          <div class="step-hdr"><span class="step-time">Step 1 · 0.0s</span><span class="step-badge badge-nws">NWS</span></div>
-          <p>Physics baseline plots first. Reader sees the classical forecast settle.</p>
-        </div>
-        <div class="sequence-step">
-          <div class="step-hdr"><span class="step-time">Step 2 · 0.6s</span><span class="step-badge badge-aifs">AIFS</span></div>
-          <p>ML line animates in. Where it diverges, the diff catches the eye.</p>
-        </div>
-        <div class="sequence-step">
-          <div class="step-hdr"><span class="step-time">Step 3 · 1.2s</span><span class="step-badge badge-dm">DeepMind</span></div>
-          <p>Third lineage arrives last in v3. Full picture lands cleanly.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="feature-section">
       <div class="section-header-row">
         <div class="section-title">Storm tracker — model divergence alerts</div>
         <div class="section-meta" id="storm-count"></div>
