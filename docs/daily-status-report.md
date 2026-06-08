@@ -9,7 +9,7 @@ What landed today:
 
 - Diagnosed that the current accuracy scoreboard uses the regular Open-Meteo API with past_days. This returns recent model output instead of actual forecasts issued at specific lead times.
 
-- Cnfirmed this is the main reason the current scoreboard is not defensible.
+- Confirmed this is the main reason the current scoreboard is not defensible.
 
 - Identified the Historical Forecast API (https://open-meteo.com/en/docs/historical-forecast-api) as the correct fix. This is different from the current ECMWF forecast API.
 
