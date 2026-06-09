@@ -7,7 +7,7 @@ Bands: N/A
 
 What landed today:
 
-- Diagnosed that the current accuracy scoreboard uses the regular Open-Meteo API with past_days. This returns recent model output instead of actual forecasts issued at specific lead times.
+- Diagnosed that the current accuracy scoreboard uses `past_days` on the regular Open-Meteo API. This returns the most recent model output for the recent past, not the actual forecasts that were issued days earlier for those dates.
 
 - Confirmed this is the main reason the current scoreboard is not defensible.
 
