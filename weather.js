@@ -291,9 +291,9 @@ function renderForecast(nwsPeriods, aifsPeriods, city, state) {
     <section class="feature-section">
       <div class="section-header-row">
         <div class="section-title">Model accuracy scoreboard</div>
-        <div class="section-meta">+3-day lead · daily max °F · MAE</div>
+        <div class="section-meta">+3-day lead · daily high temperature · avg error in °F</div>
       </div>
-      <div class="section-subtitle">Forecasts as issued 3 days ahead, verified against ASOS observations</div>
+      <div class="section-subtitle">Forecasts as issued 3 days ahead, verified against airport weather station readings</div>
       <div class="scoreboard-cards" id="scoreboard-cards">
         <div class="score-loading">Loading historical data…</div>
       </div>
