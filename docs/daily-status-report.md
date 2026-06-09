@@ -43,8 +43,6 @@ Bands: N/A
 - Looking through the Open-Meteo and NWS APIs was overwhelming at first. It took time to figure out which endpoint returns what before the diagnosis clicked.
 
 
-
-
 # Tuesday, Jun 9th: Phase 1 complete
 
 ## Pre-registration
@@ -69,9 +67,15 @@ Bands: GFS surprise thresholds at 2.0°F (suspiciously low) and 8.0°F (suspicio
 
 ## Result against prediction
 
-- Chicago: GFS 5.8°F, AIFS 3.1°F. AIFS won by 2.7°F, which is outside the predicted ranges for both models but still within the 3.0°F threshold where the pipeline would be questioned. To verify the result, I ran the scratch script against May 26 to 30 and got GFS MAE 6.4°F and AIFS MAE 2.4°F over that window, consistent with the 30-day scoreboard. The pipeline is clean.
+- Chicago, IL: GFS 5.8°F, AIFS 3.1°F. AIFS won by 2.7°F, which is outside the predicted ranges for both models but still within the 3.0°F threshold where the pipeline would be questioned. To verify the result, I ran the scratch script against May 26 to 30 and got GFS MAE 6.4°F and AIFS MAE 2.4°F over that window, consistent with the 30-day scoreboard. The pipeline is clean.
 
-- San Diego: GFS 1.8°F, AIFS 1.9°F. The two models came in essentially tied, with both well below their predicted ranges. GFS came in at 1.8°F, close to the 2.0°F suspicion flag, which warranted a hand-check. The scratch script returned GFS MAE 2.1°F and AIFS MAE 1.6°F for May 26 to 30, consistent with the scoreboard. San Diego's stable marine climate most likely explains the low errors rather than a pipeline issue.
+- San Diego, CA: GFS 1.8°F, AIFS 1.9°F. The two models came in essentially tied, with both well below their predicted ranges. GFS came in at 1.8°F, close to the 2.0°F suspicion flag, which warranted a hand-check. The scratch script returned GFS MAE 2.1°F and AIFS MAE 1.6°F for May 26 to 30, consistent with the scoreboard. San Diego's stable marine climate most likely explains the low errors rather than a pipeline issue.
+
+- Belleair, FL: GFS 2.8°F, AIFS 3.2°F over 30 days. GFS won by 0.4°F. Both models below predicted ranges. Hand-checked May 26 to 30: GFS MAE 2.5°F, AIFS MAE 2.8°F. Consistent with scoreboard. Clean.
+
+- San Antonio, TX: GFS 2.3°F, AIFS 2.8°F over 30 days. GFS won by 0.5°F. Both models below predicted ranges. Hand-checked May 26 to 30: GFS MAE 2.8°F, AIFS MAE 1.1°F. AIFS won this 5-day window but GFS won the 30-day aggregate. Consistent with scoreboard given window variance.
+
+All results stand as measured. No re-runs.
 
 ## What's next
 
@@ -79,4 +83,4 @@ Bands: GFS surprise thresholds at 2.0°F (suspiciously low) and 8.0°F (suspicio
 
 ## Anything surprising or worth flagging
 
-- AIFS performed significantly better than predicted across all cities tested, consistently coming in well below its expected 4.5 to 5.5°F range. The Chicago result was the most striking. AIFS won by 2.7°F on a period with strong frontal activity, which the pre-registration flagged as a scenario where AIFS might be competitive but did not expect it to dominate the aggregate.
+- AIFS performed significantly better than predicted across all four cities tested, consistently coming in well below its expected 4.5 to 5.5°F range. GFS won in three of the four cities but also came in below its predicted range in most cases. The Chicago result was the most striking. AIFS won by 2.7°F on a period with strong frontal activity, which the pre-registration flagged as a scenario where AIFS might be competitive but did not expect it to dominate the aggregate. The San Antonio hand-check added a secondary note: AIFS won the May 26 to 30 window despite GFS winning the 30-day aggregate, which suggests the result is sensitive to the specific days sampled.
