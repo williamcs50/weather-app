@@ -1,11 +1,12 @@
 # Monday, Jun 8th: Phase 1 kickoff
 
-Pre-registration (measurement days only — fill BEFORE running):
+## Pre-registration
 
 Prediction: N/A (not a measurement day)
+
 Bands: N/A
 
-What landed today:
+## What landed today
 
 - Diagnosed that the current accuracy scoreboard uses `past_days` on the regular Open-Meteo API. This returns the most recent model output for the recent past, not the actual forecasts that were issued days earlier for those dates.
 
@@ -17,7 +18,7 @@ What landed today:
 
 
 
-What's open (carrying forward):
+## What's open (carrying forward)
 
 - Add formal pre-registration for +3 day maximum temperature.
 
@@ -26,17 +27,56 @@ What's open (carrying forward):
 - Update the scoreboard.
 
 
-Result against prediction (measurement days only):
+## Result against prediction 
 
 - N/A (not a measurement day)
 
 
-What's next:
+## What's next
 
 - Do pre-registration tomorrow.
 
 - Decide on the best approach for measuring both models given the different APIs.
 
-Anything surprising or worth flagging:
+## Anything surprising or worth flagging
 
 - Looking through the Open-Meteo and NWS APIs was overwhelming at first. It took time to figure out which endpoint returns what before the diagnosis clicked.
+
+
+
+
+# Tuesday, Jun 9th: Phase 1 complete
+
+## Pre-registration
+
+Prediction: GFS MAE 3.5 to 4.5°F, AIFS MAE 4.5 to 5.5°F, GFS outperforms AIFS by 0.8 to 1.5°F overall.
+
+Bands: GFS surprise thresholds at 2.0°F (suspiciously low) and 8.0°F (suspiciously high). If AIFS beats GFS by more than 3.0°F, question the pipeline. If AIFS wins by under 1.5°F, treat as genuine.
+
+## What landed today
+
+- Built and shipped the corrected scoreboard pipeline
+
+- Hand-checked the pipeline against the scratch script for Chicago and San Diego
+
+- Ran results across four cities
+
+- Updated README, footer, and docs to reflect Phase 1 complete
+
+## What's open (carrying forward)
+
+- Nothing carrying forward from Phase 1.
+
+## Result against prediction
+
+- Chicago: GFS 5.8°F, AIFS 3.1°F. AIFS won by 2.7°F, which is outside the predicted ranges for both models but still within the 3.0°F threshold where the pipeline would be questioned. To verify the result, I ran the scratch script against May 26 to 30 and got GFS MAE 6.4°F and AIFS MAE 2.4°F over that window, consistent with the 30-day scoreboard. The pipeline is clean.
+
+- San Diego: GFS 1.8°F, AIFS 1.9°F. The two models came in essentially tied, with both well below their predicted ranges. GFS came in at 1.8°F, close to the 2.0°F suspicion flag, which warranted a hand-check. The scratch script returned GFS MAE 2.1°F and AIFS MAE 1.6°F for May 26 to 30, consistent with the scoreboard. San Diego's stable marine climate most likely explains the low errors rather than a pipeline issue.
+
+## What's next
+
+- Phase 2: real forecast uncertainty. Confidence bands and decay driven by real ensemble spread. Prototype caveat removed.
+
+## Anything surprising or worth flagging
+
+- AIFS performed significantly better than predicted across all cities tested, consistently coming in well below its expected 4.5 to 5.5°F range. The Chicago result was the most striking. AIFS won by 2.7°F on a period with strong frontal activity, which the pre-registration flagged as a scenario where AIFS might be competitive but did not expect it to dominate the aggregate.
