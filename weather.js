@@ -21,7 +21,11 @@ async function getNWSPoints(lat, lon) {
   const res = await fetch(`https://api.weather.gov/points/${lat.toFixed(4)},${lon.toFixed(4)}`);
   if (!res.ok) throw new Error("Location is outside NWS coverage. Try a US city.");
   const data = await res.json();
-  return data.properties.forecast;
+  return {
+    forecastUrl: data.properties.forecast,
+    stationsUrl: data.properties.observationStations,
+    stateCode:   data.properties.relativeLocation.properties.state,
+  };
 }
 
 async function getForecastPeriods(forecastUrl) {
@@ -110,67 +114,102 @@ function parseAIFSPeriods(data) {
     .slice(0, 8);
 }
 
-async function fetchHistoricalAccuracy(lat, lon) {
-  const end   = new Date();
-  const start = new Date(end);
-  start.setDate(start.getDate() - 30);
-  const fmt = d => d.toISOString().slice(0, 10);
+async function fetchHistoricalAccuracy(lat, lon, stationsUrl, stateCode) {
+  // Measure real forecast skill: forecasts as issued at +3-day lead on daily max °F,
+  // verified against Iowa Mesonet ASOS observations. Both models through identical pipeline.
+  const today = new Date();
+  const end   = new Date(today); end.setDate(end.getDate() - 4);   // allow obs to finalise
+  const start = new Date(end);  start.setDate(start.getDate() - 29); // 30-day window
+  const fmt   = d => d.toISOString().slice(0, 10);
+  const startStr = fmt(start), endStr = fmt(end);
 
-  const obsUrl  = `https://archive-api.open-meteo.com/v1/archive?latitude=${lat.toFixed(4)}&longitude=${lon.toFixed(4)}&start_date=${fmt(start)}&end_date=${fmt(end)}&daily=temperature_2m_max&timezone=auto`;
-  const gfsUrl  = `https://api.open-meteo.com/v1/forecast?latitude=${lat.toFixed(4)}&longitude=${lon.toFixed(4)}&daily=temperature_2m_max&models=gfs_seamless&past_days=30&forecast_days=1&timezone=auto`;
-  // AIFS: use the same model as the live forecast, hourly, and compute daily max
-  const aifsUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat.toFixed(4)}&longitude=${lon.toFixed(4)}&hourly=temperature_2m&models=ecmwf_aifs025_single&past_days=30&forecast_days=1&timezone=auto`;
+  // Nearest ASOS station via NWS observation stations list
+  if (!stationsUrl) return null;
+  const stRes = await fetch(stationsUrl, { headers: { 'User-Agent': 'nws-weather-app/1.0' } });
+  if (!stRes.ok) return null;
+  const stData  = await stRes.json();
+  const stationK = stData.features?.[0]?.properties?.stationIdentifier;
+  if (!stationK) return null;
+  const station = stationK.replace(/^K/, '');  // "KORD" → "ORD"
 
-  const [obsRes, gfsRes, aifsRes] = await Promise.all([
-    fetch(obsUrl), fetch(gfsUrl), fetch(aifsUrl)
+  // Iowa Mesonet: ASOS daily high (°F, already converted)
+  const [y1, m1, d1] = startStr.split('-');
+  const [y2, m2, d2] = endStr.split('-');
+  const mesonetUrl = `https://mesonet.agron.iastate.edu/cgi-bin/request/daily.py`
+    + `?network=${stateCode}_ASOS&stations=${station}`
+    + `&year1=${y1}&month1=${m1}&day1=${d1}`
+    + `&year2=${y2}&month2=${m2}&day2=${d2}`
+    + `&vars[]=max_tmpf&what=view&delim=comma`;
+
+  // Open-Meteo Previous Runs API: temperature_2m_previous_day3 is the hourly
+  // temperature from the model run issued exactly 3 days before the valid time.
+  // Fetching both models through the same endpoint/variable/date range ensures
+  // no asymmetry between GFS and AIFS.
+  const prevBase = `https://previous-runs-api.open-meteo.com/v1/forecast`
+    + `?latitude=${lat.toFixed(4)}&longitude=${lon.toFixed(4)}`
+    + `&start_date=${startStr}&end_date=${endStr}`
+    + `&hourly=temperature_2m_previous_day3&timezone=auto`;
+
+  const [mesonetRes, gfsRes, aifsRes] = await Promise.all([
+    fetch(mesonetUrl),
+    fetch(`${prevBase}&models=gfs_seamless`),
+    fetch(`${prevBase}&models=ecmwf_aifs025_single`),
   ]);
-  if (!obsRes.ok) return null;
 
-  const [obs, gfs, aifs] = await Promise.all([
-    obsRes.json(),
+  if (!mesonetRes.ok) return null;
+
+  // Parse Mesonet CSV: columns are station, date (YYYY-MM-DD), max_tmpf
+  const obsMap = {};
+  (await mesonetRes.text()).trim().split('\n').slice(1).forEach(line => {
+    const cols = line.split(',');
+    if (cols.length >= 3 && cols[2] !== '' && cols[2] !== 'M') {
+      obsMap[cols[1].trim()] = parseFloat(cols[2]);
+    }
+  });
+
+  // Derive daily max °F from hourly Previous Runs data
+  function parseDailyMaxF(json) {
+    const map   = {};
+    const times = json?.hourly?.time ?? [];
+    const temps = json?.hourly?.temperature_2m_previous_day3 ?? [];
+    times.forEach((t, i) => {
+      const day = t.slice(0, 10);
+      const c   = temps[i];
+      if (c != null) {
+        const f = c * 9 / 5 + 32;
+        if (map[day] == null || f > map[day]) map[day] = f;
+      }
+    });
+    return map;
+  }
+
+  const [gfsJson, aifsJson] = await Promise.all([
     gfsRes.ok  ? gfsRes.json()  : Promise.resolve(null),
     aifsRes.ok ? aifsRes.json() : Promise.resolve(null),
   ]);
 
-  // GFS: daily max direct from API
-  const gfsMap = {};
-  (gfs?.daily?.time ?? []).forEach((d, i) => { gfsMap[d] = gfs.daily.temperature_2m_max[i]; });
+  const gfsMap  = parseDailyMaxF(gfsJson);
+  const aifsMap = parseDailyMaxF(aifsJson);
 
-  // AIFS: compute daily max from hourly °C values
-  const aifsMap = {};
-  (aifs?.hourly?.time ?? []).forEach((timeStr, i) => {
-    const date = timeStr.slice(0, 10);
-    const temp = aifs.hourly.temperature_2m[i];
-    if (temp != null && (aifsMap[date] == null || temp > aifsMap[date])) {
-      aifsMap[date] = temp;
-    }
-  });
+  // MAE: only dates where both observation and forecast are present — no interpolation
+  let gfsAbsErr = 0, gfsDays = 0;
+  let aifsAbsErr = 0, aifsDays = 0;
 
-  // Count GFS and AIFS hits independently so one missing source doesn't zero the other
-  let gfsHits = 0, gfsDays = 0, aifsHits = 0, aifsDays = 0;
-  (obs.daily?.time ?? []).forEach((date, i) => {
-    const actual = obs.daily.temperature_2m_max[i];
-    if (actual == null) return;
-    const actualF = actual * 9 / 5 + 32;
+  Object.keys(obsMap).forEach(date => {
+    const obs = obsMap[date];
 
     const gfsPred = gfsMap[date];
-    if (gfsPred != null) {
-      gfsDays++;
-      if (Math.abs(actualF - (gfsPred * 9 / 5 + 32)) <= 2) gfsHits++;
-    }
+    if (gfsPred != null) { gfsAbsErr += Math.abs(obs - gfsPred); gfsDays++; }
 
     const aifsPred = aifsMap[date];
-    if (aifsPred != null) {
-      aifsDays++;
-      if (Math.abs(actualF - (aifsPred * 9 / 5 + 32)) <= 2) aifsHits++;
-    }
+    if (aifsPred != null) { aifsAbsErr += Math.abs(obs - aifsPred); aifsDays++; }
   });
 
   return {
-    nws:      gfsDays  > 0 ? Math.round(gfsHits  / gfsDays  * 100) : null,
-    aifs:     aifsDays > 0 ? Math.round(aifsHits / aifsDays * 100) : null,
-    nwsDays:  gfsDays,
-    aifsDays: aifsDays,
+    gfsMae:   gfsDays  > 0 ? Math.round(gfsAbsErr  / gfsDays  * 10) / 10 : null,
+    aifsMae:  aifsDays > 0 ? Math.round(aifsAbsErr / aifsDays * 10) / 10 : null,
+    gfsDays,
+    aifsDays,
   };
 }
 
@@ -252,9 +291,9 @@ function renderForecast(nwsPeriods, aifsPeriods, city, state) {
     <section class="feature-section">
       <div class="section-header-row">
         <div class="section-title">Model accuracy scoreboard</div>
-        <div class="section-meta">last 30 days · ±2°F threshold</div>
+        <div class="section-meta">+3-day lead · daily max °F · MAE</div>
       </div>
-      <div class="section-subtitle">Backfilled from public historic forecast archives</div>
+      <div class="section-subtitle">Forecasts as issued 3 days ahead, verified against ASOS observations</div>
       <div class="scoreboard-cards" id="scoreboard-cards">
         <div class="score-loading">Loading historical data…</div>
       </div>
@@ -504,15 +543,15 @@ function renderScoreboard(accuracy) {
     return;
   }
   el.innerHTML = `
-    <div class="score-card score-card-nws">
-      <div class="score-src">NWS <span class="score-sub">(via GFS)</span></div>
-      <div class="score-pct">${accuracy.nws ?? '—'}%</div>
-      <div class="score-label">within ±2°F · ${accuracy.nwsDays} days</div>
+    <div class="score-card score-card-gfs">
+      <div class="score-src">GFS <span class="score-sub">(NWS)</span></div>
+      <div class="score-pct">${accuracy.gfsMae != null ? accuracy.gfsMae + '°F' : '—'}</div>
+      <div class="score-label">mean abs error · ${accuracy.gfsDays} days</div>
     </div>
     <div class="score-card score-card-aifs">
       <div class="score-src">AIFS</div>
-      <div class="score-pct">${accuracy.aifs ?? '—'}%</div>
-      <div class="score-label">within ±2°F · ${accuracy.aifsDays} days</div>
+      <div class="score-pct">${accuracy.aifsMae != null ? accuracy.aifsMae + '°F' : '—'}</div>
+      <div class="score-label">mean abs error · ${accuracy.aifsDays} days</div>
     </div>
     <div class="score-card score-card-dm">
       <div class="score-src model-dm">DeepMind</div>
@@ -537,7 +576,7 @@ document.getElementById('weather-form').addEventListener('submit', async (e) => 
   try {
     // Geocode once, then fetch both sources in parallel
     const { lat, lon }              = await geocodeCity(city, state);
-    const forecastUrl               = await getNWSPoints(lat, lon);
+    const { forecastUrl, stationsUrl, stateCode } = await getNWSPoints(lat, lon);
     const [nwsPeriods, aifsPeriods] = await Promise.all([
       getForecastPeriods(forecastUrl),
       fetchAIFSForecast(lat, lon),
@@ -546,8 +585,8 @@ document.getElementById('weather-form').addEventListener('submit', async (e) => 
     status.textContent = '';
     renderForecast(nwsPeriods, aifsPeriods, city, state);
 
-    // Scoreboard runs independently — slow archive API shouldn't delay main render
-    fetchHistoricalAccuracy(lat, lon)
+    // Scoreboard runs independently — slow archive + mesonet APIs shouldn't delay main render
+    fetchHistoricalAccuracy(lat, lon, stationsUrl, stateCode)
       .then(acc => renderScoreboard(acc))
       .catch(()  => renderScoreboard(null));
 
