@@ -115,4 +115,4 @@ All results stand as measured. No re-runs.
 
 ## Anything surprising or worth flagging
 
-- Going in today, it was not clear whether both models could be compared the same way for uncertainty. It turned out both models run multiple forecast versions, which meant the confidence bands could be built the same way for both rather than using a formula as a fallback for one side.
+- Going in today, it was not clear whether both models could be compared the same way for uncertainty. It turned out both models produce real ensemble members (GFS: 31, AIFS: 51), which meant the confidence bands could be built the same way mechanically for both, though the two ensembles sample different kinds of uncertainty. That finding is now reflected in labels on the page.
