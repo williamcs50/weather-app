@@ -558,6 +558,7 @@ function renderScoreboard(accuracy) {
       <div class="score-pct score-pct-dm">—</div>
       <div class="score-label">v3 · accumulates from access</div>
     </div>
+    <p class="scoreboard-note">30-day window ending 4 days ago. One airport station per city. Pilot sample, not a climatological baseline.</p>
   `;
 }
 

@@ -274,6 +274,7 @@ h3 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; colo
 .score-pct-dm     { color: #bbb; }
 .score-label      { font-size: 0.75rem; color: #888; }
 .score-loading    { font-size: 0.85rem; color: #aaa; padding: 0.5rem 0; }
+.scoreboard-note  { font-size: 0.75rem; color: #aaa; margin: 0.75rem 0 0; grid-column: 1 / -1; }
 
 .error { color: #c0392b; }
 
