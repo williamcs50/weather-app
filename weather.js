@@ -35,6 +35,27 @@ async function getForecastPeriods(forecastUrl) {
   return data.properties.periods;
 }
 
+async function fetchEnsembleSpread(lat, lon) {
+  const base = `https://ensemble-api.open-meteo.com/v1/ensemble`
+    + `?latitude=${lat}&longitude=${lon}`
+    + `&hourly=temperature_2m&forecast_days=10&timezone=auto`;
+
+  const [gfsRes, aifsRes] = await Promise.all([
+    fetch(`${base}&models=gfs025`),
+    fetch(`${base}&models=ecmwf_aifs025`),
+  ]);
+
+  const [gfsData, aifsData] = await Promise.all([
+    gfsRes.ok  ? gfsRes.json()  : Promise.resolve(null),
+    aifsRes.ok ? aifsRes.json() : Promise.resolve(null),
+  ]);
+
+  return {
+    gfs:  gfsData  ? parseEnsemblePeriods(gfsData)  : null,
+    aifs: aifsData ? parseEnsemblePeriods(aifsData) : null,
+  };
+}
+
 async function fetchAIFSForecast(lat, lon) {
   // timezone=auto makes Open-Meteo return local times; without it the day/night
   // block splitting is wrong for US cities
@@ -109,6 +130,80 @@ function parseAIFSPeriods(data) {
         temperatureUnit: 'F',
         shortForecast:   deriveShortForecast(block.precipSum),
         isDaytime:       block.isDaytime,
+      };
+    })
+    .slice(0, 8);
+}
+
+function parseEnsemblePeriods(data) {
+  const hourly     = data.hourly;
+  const times      = hourly.time;
+  const memberKeys = Object.keys(hourly).filter(k => k.startsWith('temperature_2m_member'));
+  const allKeys    = ['temperature_2m', ...memberKeys];
+
+  const today    = new Date().toISOString().slice(0, 10);
+  const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+  const blocks = {};
+  times.forEach((timeStr, i) => {
+    const hour    = parseInt(timeStr.slice(11, 13), 10);
+    const dateStr = timeStr.slice(0, 10);
+    let blockKey, isDaytime;
+
+    if (hour >= 6 && hour < 18) {
+      blockKey  = `${dateStr}-day`;
+      isDaytime = true;
+    } else {
+      const nightDate = hour < 6
+        ? new Date(new Date(dateStr).getTime() - 864e5).toISOString().slice(0, 10)
+        : dateStr;
+      blockKey  = `${nightDate}-night`;
+      isDaytime = false;
+    }
+
+    if (!blocks[blockKey]) {
+      blocks[blockKey] = { memberSamples: {}, isDaytime, date: blockKey.slice(0, 10) };
+      allKeys.forEach(k => { blocks[blockKey].memberSamples[k] = []; });
+    }
+
+    allKeys.forEach(k => {
+      const v = hourly[k]?.[i];
+      if (v != null) blocks[blockKey].memberSamples[k].push(v);
+    });
+  });
+
+  return Object.entries(blocks)
+    .filter(([, b]) => b.memberSamples['temperature_2m']?.length > 0 && b.date >= today)
+    .map(([, block]) => {
+      const date    = block.date;
+      const dt      = new Date(date + 'T12:00:00');
+      const isToday = date === today;
+      const name    = isToday
+        ? (block.isDaytime ? 'Today' : 'Tonight')
+        : dayNames[dt.getDay()] + (block.isDaytime ? '' : ' Night');
+
+      // One mean-temperature per member for this period, in °F.
+      // memberMeans[0] = control, memberMeans[1..n] = perturbed members.
+      // Kept in full so a displayed band can be traced back to individual members.
+      const memberMeans = allKeys.map(k => {
+        const vals = block.memberSamples[k];
+        if (!vals.length) return null;
+        const avgC = vals.reduce((a, b) => a + b, 0) / vals.length;
+        return avgC * 9 / 5 + 32;
+      }).filter(v => v != null);
+
+      const sorted = [...memberMeans].sort((a, b) => a - b);
+      const p10    = sorted[Math.floor(sorted.length * 0.10)];
+      const p90    = sorted[Math.floor(sorted.length * 0.90)];
+      const mean   = memberMeans.reduce((a, b) => a + b, 0) / memberMeans.length;
+
+      return {
+        name,
+        isDaytime:   block.isDaytime,
+        mean:        Math.round(mean),
+        p10:         Math.round(p10),
+        p90:         Math.round(p90),
+        memberMeans, // audit trail: sort these to verify p10/p90
       };
     })
     .slice(0, 8);
@@ -239,7 +334,7 @@ function renderError(message) {
 let convergenceChart = null;
 let decayChart       = null;
 
-function renderForecast(nwsPeriods, aifsPeriods, city, state) {
+function renderForecast(nwsPeriods, aifsPeriods, city, state, ensembleData) {
   const current = nwsPeriods[0];
 
   // Destroy previous Chart.js instances; re-using a canvas without destroying
@@ -261,7 +356,7 @@ function renderForecast(nwsPeriods, aifsPeriods, city, state) {
         <div class="chart-legend">
           <span class="leg-nws">— NWS</span>
           <span class="leg-aifs">— AIFS</span>
-          <span class="leg-dm">- - DeepMind (v3)</span>
+          <span class="leg-dm">- - DeepMind (v3) · placeholder, no real data</span>
         </div>
       </div>
       <div class="chart-wrap"><canvas id="convergence-chart"></canvas></div>
@@ -269,13 +364,13 @@ function renderForecast(nwsPeriods, aifsPeriods, city, state) {
 
     <section class="feature-section">
       <div class="section-title" id="confidence-title">Model confidence</div>
-      <div class="section-subtitle">Gradient depth and range show each model's certainty</div>
+      <div class="section-subtitle">How wide a range each model's forecasts cover for this period</div>
       <div class="conf-cards" id="confidence-cards"></div>
     </section>
 
     <section class="feature-section">
-      <div class="section-title">Confidence over the forecast horizon</div>
-      <div class="section-subtitle">Shaded bands widen as model certainty decays</div>
+      <div class="section-title">Confidence over the coming days</div>
+      <div class="section-subtitle">Shaded bands widen as forecasts get less certain further out</div>
       <div class="chart-wrap"><canvas id="decay-chart"></canvas></div>
       <div class="decay-annotations" id="decay-annotations"></div>
     </section>
@@ -291,7 +386,7 @@ function renderForecast(nwsPeriods, aifsPeriods, city, state) {
     <section class="feature-section">
       <div class="section-header-row">
         <div class="section-title">Model accuracy scoreboard</div>
-        <div class="section-meta">+3-day lead · daily high temperature · avg error in °F</div>
+        <div class="section-meta">3 days ahead · daily high temperature · average error in °F</div>
       </div>
       <div class="section-subtitle">Forecasts as issued 3 days ahead, verified against airport weather station readings</div>
       <div class="scoreboard-cards" id="scoreboard-cards">
@@ -303,16 +398,15 @@ function renderForecast(nwsPeriods, aifsPeriods, city, state) {
   const nws  = nwsPeriods.slice(0, 7);
   const aifs = aifsPeriods.slice(0, 7);
   renderConvergenceChart(nws, aifs);
-  renderConfidenceCards(nws, aifs);
-  renderDecayChart(nws, aifs);
+  renderConfidenceCards(nws, aifs, ensembleData);
+  renderDecayChart(nws, aifs, ensembleData);
   renderStormTracker(nws.slice(1), aifs.slice(1));
 }
 
 function renderConvergenceChart(nwsPeriods, aifsPeriods) {
-  const aifsByName = Object.fromEntries(aifsPeriods.map(p => [p.name, p]));
-  const labels     = nwsPeriods.map(p => p.name);
-  const nwsData    = nwsPeriods.map(p => p.temperature);
-  const aifsData   = nwsPeriods.map(p => aifsByName[p.name]?.temperature ?? null);
+  const labels  = nwsPeriods.map(p => p.name);
+  const nwsData = nwsPeriods.map(p => p.temperature);
+  const aifsData = nwsPeriods.map((_, i) => aifsPeriods[i]?.temperature ?? null);
   // DeepMind stub: midpoint of NWS and AIFS with a small alternating offset
   const dmData     = nwsData.map((n, i) => {
     const a = aifsData[i];
@@ -366,62 +460,60 @@ function renderConvergenceChart(nwsPeriods, aifsPeriods) {
     convergenceChart.data.datasets.push({
       label: 'DeepMind (v3)',
       data: dmData,
-      borderColor: '#9e9e9e',
+      borderColor: 'rgba(158,158,158,0.35)',
       borderDash: [5, 4],
       borderWidth: 1.5,
-      pointRadius: 3,
-      pointBackgroundColor: '#9e9e9e',
+      pointRadius: 0,
       tension: 0.3,
     });
     convergenceChart.update();
   }, 1200);
 }
 
-function renderConfidenceCards(nwsPeriods, aifsPeriods) {
-  const aifsByName = Object.fromEntries(aifsPeriods.map(p => [p.name, p]));
+function renderConfidenceCards(nwsPeriods, aifsPeriods, ensembleData) {
+  const aifsByName  = Object.fromEntries(aifsPeriods.map(p => [p.name, p]));
+  const gfsPeriods  = ensembleData?.gfs  ?? [];
+  const aifsPeriods_ = ensembleData?.aifs ?? [];
 
   // Pick the period with the largest NWS/AIFS temperature divergence
-  let featured = nwsPeriods[1] ?? nwsPeriods[0];
-  let maxDiff   = 0;
-  nwsPeriods.slice(1).forEach(p => {
+  let featuredIdx = 1;
+  let maxDiff     = 0;
+  nwsPeriods.slice(1).forEach((p, i) => {
     const a    = aifsByName[p.name];
     const diff = a ? Math.abs(p.temperature - a.temperature) : 0;
-    if (diff > maxDiff) { maxDiff = diff; featured = p; }
+    if (diff > maxDiff) { maxDiff = diff; featuredIdx = i + 1; }
   });
 
-  const idx          = nwsPeriods.indexOf(featured);
-  const aifsFeatured = aifsByName[featured?.name];
-
-  // Mock confidence ranges: uncertainty grows with period index.
-  // Prototype UI — v4 wires in real ensemble data from Open-Meteo.
-  const nwsRange  = Math.round(2 + idx * 0.4);
-  const aifsRange = Math.round(1 + idx * 0.3);
-  const nwsConf   = idx < 3 ? 'HIGH' : 'MODERATE';
-  const aifsConf  = idx < 4 ? 'VERY HIGH' : 'HIGH';
+  const featured = nwsPeriods[featuredIdx] ?? nwsPeriods[0];
+  const gfsEns   = gfsPeriods[featuredIdx]  ?? gfsPeriods[0];
+  const aifsEns  = aifsPeriods_[featuredIdx] ?? aifsPeriods_[0];
 
   document.getElementById('confidence-title').textContent =
-    `${featured?.name ?? ''} — model confidence`;
+    `${featured?.name ?? ''} · model confidence`;
+
+  const gfsRangeStr  = gfsEns  ? `${gfsEns.p10}–${gfsEns.p90}°F (middle 80% of ${gfsEns.memberMeans.length} runs)`
+                                : 'forecast spread unavailable';
+  const aifsRangeStr = aifsEns ? `${aifsEns.p10}–${aifsEns.p90}°F (middle 80% of ${aifsEns.memberMeans.length} runs)`
+                                : 'forecast spread unavailable';
 
   document.getElementById('confidence-cards').innerHTML = `
     <div class="conf-card conf-nws">
       <div class="conf-hdr">
-        <span class="conf-src">NWS <span class="conf-sub">Physics</span></span>
-        <span class="conf-badge badge-high">${nwsConf}</span>
+        <span class="conf-src">GFS Ensemble <span class="conf-sub">Physics model · 31 runs</span></span>
       </div>
-      <div class="conf-temp">${featured?.temperature ?? '—'}°F</div>
-      <div class="conf-range">±${nwsRange}°F range</div>
+      <div class="conf-temp">${gfsEns?.mean ?? '—'}°F</div>
+      <div class="conf-range">${gfsRangeStr}</div>
     </div>
     <div class="conf-card conf-aifs">
       <div class="conf-hdr">
-        <span class="conf-src">AIFS <span class="conf-sub">ML</span></span>
-        <span class="conf-badge badge-very-high">${aifsConf}</span>
+        <span class="conf-src">AIFS Ensemble <span class="conf-sub">machine learning model · 51 runs</span></span>
       </div>
-      <div class="conf-temp">${aifsFeatured?.temperature ?? '—'}°F</div>
-      <div class="conf-range">±${aifsRange}°F range</div>
+      <div class="conf-temp">${aifsEns?.mean ?? '—'}°F</div>
+      <div class="conf-range">${aifsRangeStr}</div>
     </div>
     <div class="conf-card conf-dm">
       <div class="conf-hdr">
-        <span class="conf-src">DeepMind <span class="conf-sub">ML (v3)</span></span>
+        <span class="conf-src">DeepMind <span class="conf-sub">machine learning (v3)</span></span>
         <span class="conf-badge badge-pending">PENDING</span>
       </div>
       <div class="conf-temp conf-pending-val">—</div>
@@ -430,16 +522,19 @@ function renderConfidenceCards(nwsPeriods, aifsPeriods) {
   `;
 }
 
-function renderDecayChart(nwsPeriods, aifsPeriods) {
-  const aifsByName = Object.fromEntries(aifsPeriods.map(p => [p.name, p]));
-  const labels     = nwsPeriods.map(p => p.name);
-  const nwsCenter  = nwsPeriods.map(p => p.temperature);
-  const aifsCenter = nwsPeriods.map(p => aifsByName[p.name]?.temperature ?? null);
-  const nwsUpper   = nwsCenter.map((t, i) => t + 2 + i * 0.35);
-  const nwsLower   = nwsCenter.map((t, i) => t - 2 - i * 0.35);
-  // AIFS: confidence cliff — stays tight through day 3, then widens sharply
-  const aifsUpper  = aifsCenter.map((t, i) => t != null ? t + 1 + Math.max(0, i - 3) * 0.7 : null);
-  const aifsLower  = aifsCenter.map((t, i) => t != null ? t - 1 - Math.max(0, i - 3) * 0.7 : null);
+function renderDecayChart(nwsPeriods, aifsPeriods, ensembleData) {
+  const gfsPeriods  = ensembleData?.gfs  ?? [];
+  const aifsPeriods_ = ensembleData?.aifs ?? [];
+  const gfsByName   = Object.fromEntries(gfsPeriods.map(p  => [p.name, p]));
+  const aifsEnsByName = Object.fromEntries(aifsPeriods_.map(p => [p.name, p]));
+
+  const labels    = nwsPeriods.map(p => p.name);
+  const gfsMean   = nwsPeriods.map((_, i) => gfsPeriods[i]?.mean   ?? null);
+  const aifsMean  = nwsPeriods.map((_, i) => aifsPeriods_[i]?.mean  ?? null);
+  const gfsUpper  = nwsPeriods.map((_, i) => gfsPeriods[i]?.p90    ?? null);
+  const gfsLower  = nwsPeriods.map((_, i) => gfsPeriods[i]?.p10    ?? null);
+  const aifsUpper = nwsPeriods.map((_, i) => aifsPeriods_[i]?.p90   ?? null);
+  const aifsLower = nwsPeriods.map((_, i) => aifsPeriods_[i]?.p10   ?? null);
 
   const ctx = document.getElementById('decay-chart').getContext('2d');
   decayChart = new Chart(ctx, {
@@ -447,20 +542,18 @@ function renderDecayChart(nwsPeriods, aifsPeriods) {
     data: {
       labels,
       datasets: [
-        // NWS band: upper fills toward next dataset (lower bound)
-        { data: nwsUpper,  fill: '+1', backgroundColor: 'rgba(26,115,232,0.12)', borderWidth: 0, pointRadius: 0, borderColor: 'transparent' },
-        { data: nwsLower,  fill: false, borderWidth: 0, pointRadius: 0, borderColor: 'transparent' },
-        { label: 'NWS',   data: nwsCenter,  fill: false, borderColor: '#1a73e8', borderWidth: 2, pointRadius: 3, tension: 0.3 },
-        // AIFS band
+        { data: gfsUpper,  fill: '+1', backgroundColor: 'rgba(26,115,232,0.12)', borderWidth: 0, pointRadius: 0, borderColor: 'transparent' },
+        { data: gfsLower,  fill: false, borderWidth: 0, pointRadius: 0, borderColor: 'transparent' },
+        { label: 'GFS Ensemble', data: gfsMean,  fill: false, borderColor: '#1a73e8', borderWidth: 2, pointRadius: 3, tension: 0.3 },
         { data: aifsUpper, fill: '+1', backgroundColor: 'rgba(46,125,82,0.12)', borderWidth: 0, pointRadius: 0, borderColor: 'transparent' },
         { data: aifsLower, fill: false, borderWidth: 0, pointRadius: 0, borderColor: 'transparent' },
-        { label: 'AIFS',  data: aifsCenter, fill: false, borderColor: '#2e7d52', borderWidth: 2, pointRadius: 3, tension: 0.3 },
+        { label: 'AIFS Ensemble', data: aifsMean, fill: false, borderColor: '#2e7d52', borderWidth: 2, pointRadius: 3, tension: 0.3 },
       ],
     },
     options: {
       responsive: true,
       plugins: {
-        legend: { labels: { filter: item => item.text === 'NWS' || item.text === 'AIFS' } },
+        legend: { labels: { filter: item => item.text === 'GFS Ensemble' || item.text === 'AIFS Ensemble' } },
       },
       scales: {
         y: { ticks: { callback: v => `${v}°` }, grid: { color: 'rgba(0,0,0,0.05)' } },
@@ -469,17 +562,29 @@ function renderDecayChart(nwsPeriods, aifsPeriods) {
     },
   });
 
-  const n = nwsPeriods.length - 1;
+  // Annotations show actual p10–p90 spread at first and last period
+  const firstGfs  = gfsPeriods[0];
+  const lastGfs   = gfsPeriods[nwsPeriods.length - 1];
+  const firstAifs = aifsPeriods_[0];
+  const lastAifs  = aifsPeriods_[nwsPeriods.length - 1];
+
+  const fmtRange = (first, last) => {
+    if (!first && !last) return 'no data';
+    const a = first ? `${first.p90 - first.p10}°` : '—';
+    const b = last  ? `${last.p90  - last.p10}°`  : '—';
+    return `${a} → ${b}`;
+  };
+
   document.getElementById('decay-annotations').innerHTML = `
     <div class="decay-card">
-      <div class="decay-model model-nws">NWS</div>
-      <div class="decay-label">Steady growth</div>
-      <div class="decay-range">±2°→±${Math.round(2 + n * 0.35)}°</div>
+      <div class="decay-model model-nws">GFS Ensemble</div>
+      <div class="decay-label">middle 80% of runs</div>
+      <div class="decay-range">${fmtRange(firstGfs, lastGfs)}</div>
     </div>
     <div class="decay-card">
-      <div class="decay-model model-aifs">AIFS</div>
-      <div class="decay-label">Cliff at day 3</div>
-      <div class="decay-range">±1°→±${Math.round(1 + Math.max(0, n - 3) * 0.7)}°</div>
+      <div class="decay-model model-aifs">AIFS Ensemble</div>
+      <div class="decay-label">middle 80% of runs</div>
+      <div class="decay-range">${fmtRange(firstAifs, lastAifs)}</div>
     </div>
     <div class="decay-card decay-card-dm">
       <div class="decay-model model-dm">DeepMind</div>
@@ -489,11 +594,10 @@ function renderDecayChart(nwsPeriods, aifsPeriods) {
 }
 
 function renderStormTracker(nwsPeriods, aifsPeriods) {
-  const aifsByName = Object.fromEntries(aifsPeriods.map(p => [p.name, p]));
-  const THRESHOLD  = 5;
+  const THRESHOLD = 5;
 
   const alerts = nwsPeriods
-    .map((nws, i) => ({ nws, aifs: aifsByName[nws.name], i }))
+    .map((nws, i) => ({ nws, aifs: aifsPeriods[i], i }))
     .filter(({ nws, aifs }) => {
       if (!aifs) return false;
       const tempDiff      = Math.abs(nws.temperature - aifs.temperature);
@@ -507,7 +611,7 @@ function renderStormTracker(nwsPeriods, aifsPeriods) {
 
       let detail = '';
       if (tempDiff >= THRESHOLD) {
-        detail += `NWS predicts ${nws.temperature}°F; AIFS predicts ${aifs.temperature}°F — ${tempDiff}°F divergence`;
+        detail += `NWS predicts ${nws.temperature}°F; AIFS predicts ${aifs.temperature}°F (${tempDiff}°F difference)`;
       }
       if (precipMismatch) {
         if (detail) detail += '. ';
@@ -527,7 +631,7 @@ function renderStormTracker(nwsPeriods, aifsPeriods) {
 
   document.getElementById('storm-alerts').innerHTML = alerts.length
     ? alerts.join('')
-    : '<p class="no-alerts">Models agree — no significant divergence detected.</p>';
+    : '<p class="no-alerts">Models agree. No significant differences detected.</p>';
 
   const countEl = document.getElementById('storm-count');
   if (countEl) countEl.innerHTML = alerts.length
@@ -546,19 +650,20 @@ function renderScoreboard(accuracy) {
     <div class="score-card score-card-gfs">
       <div class="score-src">GFS <span class="score-sub">(NWS)</span></div>
       <div class="score-pct">${accuracy.gfsMae != null ? accuracy.gfsMae + '°F' : '—'}</div>
-      <div class="score-label">mean abs error · ${accuracy.gfsDays} days</div>
+      <div class="score-label">average error · ${accuracy.gfsDays} days</div>
     </div>
     <div class="score-card score-card-aifs">
       <div class="score-src">AIFS</div>
       <div class="score-pct">${accuracy.aifsMae != null ? accuracy.aifsMae + '°F' : '—'}</div>
-      <div class="score-label">mean abs error · ${accuracy.aifsDays} days</div>
+      <div class="score-label">average error · ${accuracy.aifsDays} days</div>
     </div>
     <div class="score-card score-card-dm">
       <div class="score-src model-dm">DeepMind</div>
       <div class="score-pct score-pct-dm">—</div>
-      <div class="score-label">v3 · accumulates from access</div>
+      <div class="score-label">v3 · no data yet</div>
     </div>
-    <p class="scoreboard-note">30-day window ending 4 days ago. One airport station per city. Pilot sample, not a climatological baseline.</p>
+    <p class="scoreboard-note">30-day window ending 4 days ago. One airport station per city. Early sample, not a long-term baseline.</p>
+    <p class="scoreboard-note">Phase 1 scores used single-run GFS and AIFS forecasts. Phase 2 uses averages across all forecast runs. The two phases are not directly comparable.</p>
   `;
 }
 
@@ -578,13 +683,14 @@ document.getElementById('weather-form').addEventListener('submit', async (e) => 
     // Geocode once, then fetch both sources in parallel
     const { lat, lon }              = await geocodeCity(city, state);
     const { forecastUrl, stationsUrl, stateCode } = await getNWSPoints(lat, lon);
-    const [nwsPeriods, aifsPeriods] = await Promise.all([
+    const [nwsPeriods, aifsPeriods, ensembleData] = await Promise.all([
       getForecastPeriods(forecastUrl),
       fetchAIFSForecast(lat, lon),
+      fetchEnsembleSpread(lat, lon).catch(() => null),
     ]);
 
     status.textContent = '';
-    renderForecast(nwsPeriods, aifsPeriods, city, state);
+    renderForecast(nwsPeriods, aifsPeriods, city, state, ensembleData);
 
     // Scoreboard runs independently — slow archive + mesonet APIs shouldn't delay main render
     fetchHistoricalAccuracy(lat, lon, stationsUrl, stateCode)

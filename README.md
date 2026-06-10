@@ -1,6 +1,6 @@
 # weather-app
 
-This app shows side-by-side weather forecasts for US locations, comparing classical physics-based numerical weather prediction with modern machine-learning forecasts. Live forecasts are accessed via the [National Weather Service](https://www.weather.gov) and [Open-Meteo API](https://open-meteo.com). The physics-based model is GFS from the National Weather Service. The machine-learning model is [ECMWF's AIFS](https://www.ecmwf.int/en/about/media-centre/news/2025/ecmwfs-ai-forecasts-become-operational). Historical accuracy is verified against [Iowa Mesonet ASOS](https://mesonet.agron.iastate.edu/) observations. v2 ships with both so you can see where physics and ML agree and where they diverge. A future v3 will add [Google DeepMind's WeatherNext](https://developers.google.com/weathernext/).
+This app shows side-by-side weather forecasts for US locations, comparing classical physics-based numerical weather prediction with modern machine-learning forecasts. Live forecasts are accessed via the [National Weather Service](https://www.weather.gov) and [Open-Meteo API](https://open-meteo.com). The physics-based model is GFS from the National Weather Service. The machine-learning model is [ECMWF's AIFS](https://www.ecmwf.int/en/about/media-centre/news/2025/ecmwfs-ai-forecasts-become-operational). Historical accuracy is verified against [Iowa Mesonet ASOS](https://mesonet.agron.iastate.edu/) observations. v2 ships with both so you can see where physics and ML agree and where they diverge. Both models run as ensembles, so the confidence bands and uncertainty charts reflect real forecast spread. A future v3 will add [Google DeepMind's WeatherNext](https://developers.google.com/weathernext/).
 
 [**Live demo**](https://williamcs50.github.io/weather-app/) -- try it with any US city
 
@@ -20,6 +20,10 @@ Ground truth comes from Iowa Mesonet ASOS stations, resolved automatically for a
 
 A pre-registration document (`pre-registration.md`) was committed before the pipeline runs. It defines expected performance ranges, surprise thresholds, and pipeline validation criteria to ensure the comparison between GFS and AIFS remains rigorous and defensible.
 
+**Phase 1 / Phase 2 methodology change.** Phase 1 results used deterministic GFS and AIFS runs as point forecasts. Phase 2 switches both sides to ensemble means from GFS Ensemble 0.25° (31 members) and AIFS 0.25° (51 members), and derives uncertainty bands directly from member spread. Averaging across members reduces error and keeps the point forecast and uncertainty band from the same source. Phase 1 and Phase 2 scoreboard results are not directly comparable.
+
 ## Roadmap
+
+- Phase 2 is complete. Both models now run as ensembles: GFS Ensemble 0.25° (31 members) and AIFS 0.25° (51 members). Confidence bands and the uncertainty chart reflect real member spread, verified by hand against the raw API across four cities (Chicago, San Diego, Belleair, San Antonio).
 
 - v3 will add a third panel using Google DeepMind's WeatherNext (GenCast), giving three lineages side-by-side: NWS physics, ECMWF AIFS, and WeatherNext. Tracked in [issue #6](https://github.com/williamcs50/weather-app/issues/6). Blocked on WeatherNext API access approval.
