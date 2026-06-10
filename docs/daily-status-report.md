@@ -84,3 +84,33 @@ All results stand as measured. No re-runs.
 ## Anything surprising or worth flagging
 
 - AIFS performed significantly better than predicted across all four cities tested, consistently coming in well below its expected 4.5 to 5.5°F range. GFS won in three of the four cities but also came in below its predicted range in most cases. The Chicago result was the most striking. AIFS won by 2.7°F on a period with strong frontal activity, which the pre-registration flagged as a scenario where AIFS might be competitive but did not expect it to dominate the aggregate. The San Antonio hand-check added a secondary note: AIFS won the May 26 to 30 window despite GFS winning the 30-day aggregate, which suggests the result is sensitive to the specific days sampled.
+
+
+# Wednesday, Jun 10th: Phase 2 complete
+
+## What landed today
+
+- Replaced formula-driven confidence bands and decay chart with real ensemble spread for both models
+
+- Documented the Phase 1 and Phase 2 methodology change in the README and on the in-app scoreboard
+
+- Hand-checked ensemble output against the raw API across four cities (Chicago, San Diego, Belleair, San Antonio), all passed
+
+- Fixed the period alignment bug (name-based lookup was silently dropping periods such as "This Afternoon")
+
+- Removed jargon from user-facing strings
+
+- Updated README and roadmap to mark Phase 2 complete
+
+## What's open (carrying forward)
+
+- Nothing carrying forward from Phase 2.
+
+## What's next
+
+- v3: add WeatherNext (GenCast) as a third model. Blocked on API access approval.
+
+
+## Anything surprising or worth flagging
+
+- Going in today, it was not clear whether both models could be compared the same way for uncertainty. It turned out both models run multiple forecast versions, which meant the confidence bands could be built the same way for both rather than using a formula as a fallback for one side.
