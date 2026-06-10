@@ -503,6 +503,7 @@ function renderConfidenceCards(nwsPeriods, aifsPeriods, ensembleData) {
       </div>
       <div class="conf-temp">${gfsEns?.mean ?? '—'}°F</div>
       <div class="conf-range">${gfsRangeStr}</div>
+      <div class="conf-source-note">runs start from varied initial conditions</div>
     </div>
     <div class="conf-card conf-aifs">
       <div class="conf-hdr">
@@ -510,6 +511,7 @@ function renderConfidenceCards(nwsPeriods, aifsPeriods, ensembleData) {
       </div>
       <div class="conf-temp">${aifsEns?.mean ?? '—'}°F</div>
       <div class="conf-range">${aifsRangeStr}</div>
+      <div class="conf-source-note">runs vary within the model itself</div>
     </div>
     <div class="conf-card conf-dm">
       <div class="conf-hdr">

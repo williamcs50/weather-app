@@ -225,6 +225,7 @@ h3 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; colo
 .conf-temp        { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.15rem; }
 .conf-pending-val { color: #bbb; }
 .conf-range       { font-size: 0.78rem; color: #888; }
+.conf-source-note { font-size: 0.68rem; color: #aaa; margin-top: 0.2rem; font-style: italic; }
 
 /* ── DECAY ANNOTATIONS ────────────────────────────────────────────── */
 

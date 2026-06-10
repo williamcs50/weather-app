@@ -102,6 +102,8 @@ All results stand as measured. No re-runs.
 
 - Updated README and roadmap to mark Phase 2 complete
 
+- Added uncertainty-source labels under each confidence band. GFS shows "runs start from varied initial conditions." AIFS shows "runs vary within the model itself."
+
 ## What's open (carrying forward)
 
 - Nothing carrying forward from Phase 2.
