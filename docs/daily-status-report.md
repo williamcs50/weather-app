@@ -1,4 +1,4 @@
-# Monday, Jun 8th: Phase 1 kickoff
+# Monday, June 8th: Phase 1 kickoff
 
 ## Pre-registration
 
@@ -27,7 +27,7 @@ Bands: N/A
 - Update the scoreboard.
 
 
-## Result against prediction 
+## Result against prediction
 
 - N/A (not a measurement day)
 
@@ -43,7 +43,7 @@ Bands: N/A
 - Looking through the Open-Meteo and NWS APIs was overwhelming at first. It took time to figure out which endpoint returns what before the diagnosis clicked.
 
 
-# Tuesday, Jun 9th: Phase 1 complete
+# Tuesday, June 9th: Phase 1 complete
 
 ## Pre-registration
 
@@ -53,13 +53,13 @@ Bands: GFS surprise thresholds at 2.0°F (suspiciously low) and 8.0°F (suspicio
 
 ## What landed today
 
-- Built and shipped the corrected scoreboard pipeline
+- Built and shipped the corrected scoreboard pipeline.
 
-- Hand-checked the pipeline against the scratch script for Chicago and San Diego
+- Hand-checked the pipeline against the scratch script for Chicago and San Diego.
 
-- Ran results across four cities
+- Ran results across four cities.
 
-- Updated README, footer, and docs to reflect Phase 1 complete
+- Updated README, footer, and docs to reflect Phase 1 complete.
 
 ## What's open (carrying forward)
 
@@ -86,21 +86,21 @@ All results stand as measured. No re-runs.
 - AIFS performed significantly better than predicted across all four cities tested, consistently coming in well below its expected 4.5 to 5.5°F range. GFS won in three of the four cities but also came in below its predicted range in most cases. The Chicago result was the most striking. AIFS won by 2.7°F on a period with strong frontal activity, which the pre-registration flagged as a scenario where AIFS might be competitive but did not expect it to dominate the aggregate. The San Antonio hand-check added a secondary note: AIFS won the May 26 to 30 window despite GFS winning the 30-day aggregate, which suggests the result is sensitive to the specific days sampled.
 
 
-# Wednesday, Jun 10th: Phase 2 complete
+# Wednesday, June 10th: Phase 2 complete
 
 ## What landed today
 
-- Replaced formula-driven confidence bands and decay chart with real ensemble spread for both models
+- Replaced formula-driven confidence bands and decay chart with real ensemble spread for both models.
 
-- Documented the Phase 1 and Phase 2 methodology change in the README and on the in-app scoreboard
+- Documented the Phase 1 and Phase 2 methodology change in the README and on the in-app scoreboard.
 
-- Hand-checked ensemble output against the raw API across four cities (Chicago, San Diego, Belleair, San Antonio), all passed
+- Hand-checked ensemble output against the raw API across four cities (Chicago, San Diego, Belleair, San Antonio), all passed.
 
-- Fixed the period alignment bug (name-based lookup was silently dropping periods such as "This Afternoon")
+- Fixed the period alignment bug (name-based lookup was silently dropping periods such as "This Afternoon").
 
-- Removed jargon from user-facing strings
+- Removed jargon from user-facing strings.
 
-- Updated README and roadmap to mark Phase 2 complete
+- Updated README and roadmap to mark Phase 2 complete.
 
 - Added uncertainty-source labels under each confidence band. GFS shows "runs start from varied initial conditions." AIFS shows "runs vary within the model itself."
 
@@ -116,3 +116,38 @@ All results stand as measured. No re-runs.
 ## Anything surprising or worth flagging
 
 - Going in today, it was not clear whether both models could be compared the same way for uncertainty. It turned out both models produce real ensemble members (GFS: 31, AIFS: 51), which meant the confidence bands could be built the same way mechanically for both, though the two ensembles sample different kinds of uncertainty. That finding is now reflected in labels on the page.
+
+
+# Thursday, June 11th: Close-out
+
+## What landed today
+
+- Removed the fabricated WeatherNext line from the convergence chart. The confidence card and scoreboard were already showing it as pending; the chart was the only place a placeholder line was still rendering.
+
+- Corrected the roadmap language. The stale "blocked on access" phrasing was replaced with the real status: access granted June 1, deferral is gridded-data integration and the real-time licensing constraint.
+
+- Wrote and committed the Phase 1 and Phase 2 retrospective ([retrospective.md](retrospective.md)).
+
+## Done-criteria verification
+
+- **Real-skill scoreboard**: verified. Forecasts pulled from the Previous Runs API as issued at a fixed +3-day lead, verified against Iowa Mesonet ASOS observations. No hindsight reconstruction in the pipeline.
+
+- **Defensible numbers**: verified. Ground truth hand-checked against raw station data. Pipeline output independently verified via scratch script across four cities. Pre-registration committed to GitHub before the pipeline ran.
+
+- **Real ensemble confidence bands**: verified. GFS uses 31-member GEFS spread; AIFS uses 51-member published ensemble spread. On-page labels note that the two ensembles sample different kinds of uncertainty.
+
+- **Deterministic-AIFS decision**: resolved. AIFS has a published 51-member ensemble. The presumed asymmetry was investigated, dissolved, and documented in the retrospective. Issue #11 closed.
+
+- **WeatherNext stub**: corrected. Fabricated chart line removed. Roadmap updated; issue #6 documents the licensing distinction.
+
+- **README and roadmap**: verified against shipped state. All language reflects what is actually in the code.
+
+## What's open (carrying forward)
+
+- Nothing. The scoreboard runs for any US city. The four hand-checked cities establish pipeline trust, not the full scope. Broadening to more cities, lead times, or metrics is future work.
+
+## What's next
+
+- WeatherNext: separate project with its own charter. The real blockers are integrating gridded model data into a point-forecast pipeline and navigating the real-time data licensing constraint. API access is already in hand.
+
+- Carry the verification discipline (hand-checks, pre-registration, independent ground truth) and the scope discipline into the next project.
