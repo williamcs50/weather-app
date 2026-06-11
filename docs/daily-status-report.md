@@ -151,3 +151,28 @@ All results stand as measured. No re-runs.
 - WeatherNext: separate project with its own charter. The real blockers are integrating gridded model data into a point-forecast pipeline and navigating the real-time data licensing constraint. API access is already in hand.
 
 - Carry the verification discipline (hand-checks, pre-registration, independent ground truth) and the scope discipline into the next project.
+
+
+# Thursday, June 11th (afternoon): WeatherNext Phase A kickoff
+
+## Charter
+
+- Committed as drafted, no changes. Lead time is +3 days, matching the existing pipeline. Cities are flexible, starting with the same hand-check cities used in Phase 1.
+
+## What landed today
+
+- Read the full Earth Engine catalog schema for WeatherNext 2. The complete bands table was reviewed. There is no daily maximum temperature variable. The only surface temperature field is instantaneous `2m_temperature` in Kelvin, sampled every 6 hours.
+
+- Established data shape from documentation: 0.25 degree grid, instantaneous 6-hourly 2m temperature, 64 ensemble members, `forecast_hour` in 6-hour steps out to 15 days.
+
+- Identified the comparability finding: WeatherNext cannot be measured identically to NWS and AIFS on daily maximum temperature. Deriving a daily max from 6-hourly snapshots would carry a systematic cold bias because those snapshots miss the afternoon peak. This is a methodological gap, not an infrastructure problem.
+
+## What's open (carrying forward)
+
+- Access unconfirmed. Allowlist confirmation received by email but no query has been run against the actual dataset.
+
+## What's next
+
+- Confirm BigQuery access works by running an actual query against the WeatherNext dataset.
+
+- Pull historic point forecasts for a few city-dates and hand-check each against raw data.
