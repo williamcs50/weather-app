@@ -519,7 +519,7 @@ function renderConfidenceCards(nwsPeriods, aifsPeriods, ensembleData) {
         <span class="conf-badge badge-pending">PENDING</span>
       </div>
       <div class="conf-temp conf-pending-val">—</div>
-      <div class="conf-range">awaiting access</div>
+      <div class="conf-range">access granted · integration pending</div>
     </div>
   `;
 }
