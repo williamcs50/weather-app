@@ -356,7 +356,6 @@ function renderForecast(nwsPeriods, aifsPeriods, city, state, ensembleData) {
         <div class="chart-legend">
           <span class="leg-nws">— NWS</span>
           <span class="leg-aifs">— AIFS</span>
-          <span class="leg-dm">- - DeepMind (v3) · placeholder, no real data</span>
         </div>
       </div>
       <div class="chart-wrap"><canvas id="convergence-chart"></canvas></div>
@@ -407,11 +406,6 @@ function renderConvergenceChart(nwsPeriods, aifsPeriods) {
   const labels  = nwsPeriods.map(p => p.name);
   const nwsData = nwsPeriods.map(p => p.temperature);
   const aifsData = nwsPeriods.map((_, i) => aifsPeriods[i]?.temperature ?? null);
-  // DeepMind stub: midpoint of NWS and AIFS with a small alternating offset
-  const dmData     = nwsData.map((n, i) => {
-    const a = aifsData[i];
-    return (n != null && a != null) ? Math.round((n + a) / 2 + (i % 2 === 0 ? 1 : -1)) : null;
-  });
 
   const ctx = document.getElementById('convergence-chart').getContext('2d');
 
@@ -441,7 +435,6 @@ function renderConvergenceChart(nwsPeriods, aifsPeriods) {
     },
   });
 
-  // Animated reveal: AIFS at 0.6s, DeepMind stub at 1.2s (Idea 4)
   setTimeout(() => {
     convergenceChart.data.datasets.push({
       label: 'AIFS',
@@ -455,19 +448,6 @@ function renderConvergenceChart(nwsPeriods, aifsPeriods) {
     });
     convergenceChart.update();
   }, 600);
-
-  setTimeout(() => {
-    convergenceChart.data.datasets.push({
-      label: 'DeepMind (v3)',
-      data: dmData,
-      borderColor: 'rgba(158,158,158,0.35)',
-      borderDash: [5, 4],
-      borderWidth: 1.5,
-      pointRadius: 0,
-      tension: 0.3,
-    });
-    convergenceChart.update();
-  }, 1200);
 }
 
 function renderConfidenceCards(nwsPeriods, aifsPeriods, ensembleData) {
