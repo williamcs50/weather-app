@@ -110,7 +110,7 @@ All results stand as measured. No re-runs.
 
 ## What's next
 
-- v3: add WeatherNext (GenCast) as a third model. Blocked on API access approval.
+- v3: Add WeatherNext (GenCast) as third comparison panel. Access granted; deferred pending gridded-data integration and licensing review (see Issue #6).
 
 
 ## Anything surprising or worth flagging

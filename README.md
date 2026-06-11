@@ -26,4 +26,4 @@ A pre-registration document (`pre-registration.md`) was committed before the pip
 
 - Phase 2 is complete. Both models now run as ensembles: GFS Ensemble 0.25° (31 members) and AIFS 0.25° (51 members). Confidence bands and the uncertainty chart reflect real member spread, verified by hand against the raw API across four cities (Chicago, San Diego, Belleair, San Antonio).
 
-- v3 will add a third panel using Google DeepMind's WeatherNext (GenCast), giving three lineages side-by-side: NWS physics, ECMWF AIFS, and WeatherNext. Tracked in [issue #6](https://github.com/williamcs50/weather-app/issues/6). Blocked on WeatherNext API access approval.
+- v3: Add WeatherNext (GenCast) as third comparison panel. Access granted; deferred pending gridded-data integration and licensing review (see [Issue #6](https://github.com/williamcs50/weather-app/issues/6)).
