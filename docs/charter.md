@@ -1,0 +1,62 @@
+# WeatherNext (v3): Project Charter
+
+## Part I: Project Charter
+
+### 1. Objective
+
+Add Google DeepMind's WeatherNext (GenCast) as a third lineage in the weather-app's historic accuracy comparison (GFS, ECMWF AIFS, and now WeatherNext), measured by the same honest yardstick already built.
+
+**Why it matters.** The existing scoreboard is a ruler: forecasts as issued, fixed lead, verified against real observations. Phases 1 and 2 made that ruler defensible for two models. This project proves the ruler generalizes: a third model, from a different lineage, measured identically, without bending the method to fit it.
+
+
+### 2. Done criteria
+
+The project is complete when all of these are true:
+
+- WeatherNext historic forecast data is accessed from Google's platform (BigQuery) and reduced to a point forecast for a US city at a fixed lead time.
+- WeatherNext appears as a third lineage in the historic scoreboard, measured identically to GFS and AIFS: same lead time, same observation source (ASOS), same metric, forecasts as issued. If identical measurement proves impossible, the limitation is surfaced honestly, not papered over.
+- The WeatherNext number can be explained and defended: what it measures, where it comes from, and whether it is truly comparable to the other two.
+- Licensing is respected: only historic (more than 48 hours old) data is used; required Google attribution and the experimental-use disclaimer are on the page; no live or real-time WeatherNext display.
+- README and roadmap reflect WeatherNext shipped and the historic-only boundary.
+
+**Explicit non-goals: what done does NOT require:**
+
+- A live or real-time WeatherNext panel. Barred by real-time experimental licensing terms. This is the hard scope line.
+- A WeatherNext confidence-band or ensemble panel. Deferred to keep this project to the scoreboard third lineage.
+- Any change to the existing GFS or AIFS numbers. Those stand; this project adds, it does not re-run.
+- A particular result. Done does not require that WeatherNext wins, loses, or ties. An honestly measured number is the deliverable.
+
+
+### 3. Phases
+
+| Phase | Focus | Deliverable |
+|---|---|---|
+| A: Access and data shape | Confirm access works; pull historic WeatherNext gridded data and extract a point, fixed-lead forecast for a city | Hand-checked point forecasts for a few city-dates, proven against raw data |
+| B: Third lineage | Wire WeatherNext into the historic scoreboard, measured identically to GFS and AIFS; hand-check; label honestly | WeatherNext live as a third column, same yardstick |
+| C: Compliance and close-out | Attribution and experimental-use disclaimer on the page; README and roadmap; retrospective | Project closed clean |
+
+**Pace note.** Phase A carries the project's real unknown. WeatherNext is gridded scientific data on a cloud platform, not a simple JSON endpoint. If it cannot be measured the same way as the other two, that is a genuine finding that reshapes scope, not a failure.
+
+
+### 4. Decisions
+
+- **Lead time:** +3 days, matching the existing GFS and AIFS pipeline.
+- **Cities:** flexible, starting with the hand-check cities from the existing scoreboard (Chicago, San Diego, Belleair, San Antonio).
+- **Access channel:** BigQuery.
+- **Metric:** 18 UTC instantaneous 2m temperature at +3-day lead. Scoreboard label: "temperature at 18 UTC, 3 days ahead."
+- **Ground truth:** Iowa Mesonet ASOS hourly observation at :51 past 18 UTC, used as proxy for 18 UTC valid time. Offset is fixed, documented, and consistent across all three models.
+
+
+### 5. Scope guardrails
+
+- In scope: historic WeatherNext as a third lineage on the existing scoreboard, measured by the existing method; attribution and disclaimer; docs.
+- Deferred: live or real-time WeatherNext; a WeatherNext confidence-band panel; any model beyond the third.
+- The re-run rule: once a number is run under a pre-registered prediction, no re-running to chase a better one. Methodology bugs may be fixed; a clean number you do not like stands.
+- The licensing line: historic (more than 48 hours old) data only. The moment work drifts toward live or real-time display, stop.
+
+
+### 6. Amendments
+
+Dated log of any change to objective, done-criteria, or scope after the project starts.
+
+- **2026-06-12:** Metric changed from daily maximum temperature to 18 UTC instantaneous 2m temperature at +3-day lead. Reason: WeatherNext only provides 6-hourly instantaneous snapshots; deriving a daily max would carry a systematic cold bias because the snapshots miss the afternoon peak. 18 UTC is identical and directly readable across all three models with no derivation. Ground truth rule: Iowa Mesonet ASOS observation at :51 past 18 UTC, consistent across all cities and models.
