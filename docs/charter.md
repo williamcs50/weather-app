@@ -44,7 +44,7 @@ The project is complete when all of these are true:
 - **Cities:** flexible, starting with the hand-check cities from the existing scoreboard (Chicago, San Diego, Belleair, San Antonio).
 - **Access channel:** BigQuery.
 - **Metric:** 18 UTC instantaneous 2m temperature at +3-day lead. Scoreboard label: "temperature at 18 UTC, 3 days ahead."
-- **Ground truth:** Iowa Mesonet ASOS hourly observation at :51 past 18 UTC, used as proxy for 18 UTC valid time. Offset is fixed, documented, and consistent across all three models.
+- **Ground truth:** Iowa Mesonet ASOS observation closest to 18:00 UTC, used as proxy for 18 UTC valid time. Stations report at approximately :51 or :53 past the hour; the closest observation is used consistently across all cities and models.
 
 
 ### 5. Scope guardrails
@@ -59,4 +59,5 @@ The project is complete when all of these are true:
 
 Dated log of any change to objective, done-criteria, or scope after the project starts.
 
-- **2026-06-12:** Metric changed from daily maximum temperature to 18 UTC instantaneous 2m temperature at +3-day lead. Reason: WeatherNext only provides 6-hourly instantaneous snapshots; deriving a daily max would carry a systematic cold bias because the snapshots miss the afternoon peak. 18 UTC is identical and directly readable across all three models with no derivation. Ground truth rule: Iowa Mesonet ASOS observation at :51 past 18 UTC, consistent across all cities and models.
+- **2026-06-12:** Metric changed from daily maximum temperature to 18 UTC instantaneous 2m temperature at +3-day lead. Reason: WeatherNext only provides 6-hourly instantaneous snapshots; deriving a daily max would carry a systematic cold bias because the snapshots miss the afternoon peak. 18 UTC is identical and directly readable across all three models with no derivation.
+- **2026-06-12:** Ground truth rule generalized from ":51 past 18 UTC" to "closest ASOS observation to 18:00 UTC." Reason: not all stations report at :51; the generalized rule covers all stations regardless of their reporting offset.

@@ -34,13 +34,13 @@ Bands: N/A
 
 ## What's next
 
-- Do pre-registration tomorrow.
+- Pre-registration is the next step before the pipeline runs.
 
-- Decide on the best approach for measuring both models given the different APIs.
+- The best approach for measuring both models given the different APIs is to be determined.
 
 ## Anything surprising or worth flagging
 
-- Looking through the Open-Meteo and NWS APIs was overwhelming at first. It took time to figure out which endpoint returns what before the diagnosis clicked.
+- Initial exploration of the Open-Meteo and NWS APIs required working through several endpoints before the distinction between current model output and historic forecasts as issued became clear.
 
 
 # Tuesday, June 9th: Phase 1 complete
@@ -67,7 +67,7 @@ Bands: GFS surprise thresholds at 2.0°F (suspiciously low) and 8.0°F (suspicio
 
 ## Result against prediction
 
-- Chicago, IL: GFS 5.8°F, AIFS 3.1°F. AIFS won by 2.7°F, which is outside the predicted ranges for both models but still within the 3.0°F threshold where the pipeline would be questioned. To verify the result, I ran the scratch script against May 26 to 30 and got GFS MAE 6.4°F and AIFS MAE 2.4°F over that window, consistent with the 30-day scoreboard. The pipeline is clean.
+- Chicago, IL: GFS 5.8°F, AIFS 3.1°F. AIFS won by 2.7°F, which is outside the predicted ranges for both models but still within the 3.0°F threshold where the pipeline would be questioned. To verify the result, the scratch script was run against May 26 to 30 and returned GFS MAE 6.4°F and AIFS MAE 2.4°F, consistent with the 30-day scoreboard. The pipeline is clean.
 
 - San Diego, CA: GFS 1.8°F, AIFS 1.9°F. The two models came in essentially tied, with both well below their predicted ranges. GFS came in at 1.8°F, close to the 2.0°F suspicion flag, which warranted a hand-check. The scratch script returned GFS MAE 2.1°F and AIFS MAE 1.6°F for May 26 to 30, consistent with the scoreboard. San Diego's stable marine climate most likely explains the low errors rather than a pipeline issue.
 
@@ -110,12 +110,12 @@ All results stand as measured. No re-runs.
 
 ## What's next
 
-- v3: Add WeatherNext (GenCast) as third comparison panel. Access granted; deferred pending gridded-data integration and licensing review (see Issue #6).
+- v3: WeatherNext (GenCast) to be added as a third comparison panel. Access granted; deferred pending gridded-data integration and licensing review (see Issue #6).
 
 
 ## Anything surprising or worth flagging
 
-- Going in today, it was not clear whether both models could be compared the same way for uncertainty. It turned out both models produce real ensemble members (GFS: 31, AIFS: 51), which meant the confidence bands could be built the same way mechanically for both, though the two ensembles sample different kinds of uncertainty. That finding is now reflected in labels on the page.
+- At the start of the day, it was not clear whether both models could be compared the same way for uncertainty. Both models produce real ensemble members (GFS: 31, AIFS: 51), which meant the confidence bands could be built the same way mechanically for both, though the two ensembles sample different kinds of uncertainty. That finding is now reflected in labels on the page.
 
 
 # Thursday, June 11th: Close-out
@@ -150,7 +150,7 @@ All results stand as measured. No re-runs.
 
 - WeatherNext: separate project with its own charter. The real blockers are integrating gridded model data into a point-forecast pipeline and navigating the real-time data licensing constraint. API access is already in hand.
 
-- Carry the verification discipline (hand-checks, pre-registration, independent ground truth) and the scope discipline into the next project.
+- The verification discipline (hand-checks, pre-registration, independent ground truth) and the scope discipline carry forward to the next project.
 
 
 # Thursday, June 11th (afternoon): WeatherNext Phase A kickoff
@@ -173,6 +173,59 @@ All results stand as measured. No re-runs.
 
 ## What's next
 
-- Confirm BigQuery access works by running an actual query against the WeatherNext dataset.
+- BigQuery access is to be confirmed against the actual dataset.
 
-- Pull historic point forecasts for a few city-dates and hand-check each against raw data.
+- Historic point forecasts for a few city-dates are to be pulled and hand-checked against raw data.
+
+
+# Friday, June 12th: WeatherNext Phase A continued
+
+## What landed today
+
+- Confirmed BigQuery access directly from the data. The connection is operational, the dataset is present, and queries for any city and date return the full complement of 64 raw ensemble members. Access is verified against the actual dataset, not through correspondence alone.
+
+- Settled the metric. Daily maximum temperature was ruled out: WeatherNext provides four 6-hourly snapshots per day and those snapshots systematically miss the afternoon peak, producing a cold bias by construction. The metric is 18 UTC instantaneous 2m temperature at +3-day lead, which is directly readable from WeatherNext, GFS, and AIFS with no derivation. Ground truth is the closest ASOS observation to 18:00 UTC. The offset is not hardcoded to :51 because stations differ: ORD reports at :51, PIE at :53.
+
+- Committed the WeatherNext project charter ([charter.md](charter.md)) with two amendments dated June 12th: metric changed from daily maximum temperature to 18 UTC instantaneous 2m temperature, and ground truth rule generalized from a hardcoded :51 offset to the closest ASOS observation to 18:00 UTC.
+
+- Expanded the sample to twelve data points across six cities and two seasons. Measurements are clean across all twelve cases: forecast errors vary by city, season, and weather regime in the manner expected of genuine forecast error, not pipeline artifacts.
+
+
+## Results by city
+
+- **Chicago, IL:** Winter was 1.3°F warm with approximately 7 K of spread, the smallest error in the original four-city set. Summer was 2.3°F cold with nearly 12 K of spread, the widest in the original set. Members clustered into two distinct groups rather than a single distribution, suggesting the model resolved two possible weather regimes for that date.
+
+- **San Antonio, TX:** Winter was 4.7°F warm, one of three warm-biased cases in the full twelve-point set. Summer flipped to 6.3°F cold with moderate spread. The swing from warm in winter to cold in summer was the largest directional shift across seasons of any city in the set.
+
+- **San Diego, CA:** Winter was 3.6°F cold with approximately 3 K of spread, the tightest in the full set. The model was confident and uniformly wrong by a consistent amount across nearly all members. Summer was 5.0°F cold with moderate spread. The ASOS record showed the temperature holding at 69°F for sixteen consecutive hours before rising to 74°F at 18:51, consistent with a marine layer burn-off where observation timing contributes to apparent error.
+
+- **Belleair, FL:** Winter was 4.9°F cold with moderate spread. Summer was 6.9°F cold with approximately 9 K of spread, the second-largest error in the set. Florida summer convection drives genuine forecast uncertainty and the ensemble reflected it. A data quality note: PIE had a ten-hour ASOS observation gap in the winter case. The 18 UTC observation was present and the comparison was not affected, but the pipeline will need graceful handling for gaps of this kind.
+
+- **Denver, CO:** Summer was 5.4°F cold with approximately 9.5 K of spread. Winter was the largest single miss in the full set at 10.5°F cold with nearly 11 K of spread. Some members captured a scenario near the observed 59°F while others were substantially colder, pulling the ensemble mean well below the observation. Complex terrain at the base of the Rockies produces genuine forecast difficulty and the ensemble spread reflects it.
+
+- **Seattle, WA:** Winter was the best result in the full twelve-point set, off by 0.2°F. Summer was the only strongly warm-biased case in the set at 6.7°F warm. The observed 62°F was a cool July day consistent with marine influence or overcast, and only one ensemble member came close to the observation. The model forecast typical summer warmth that did not materialize.
+
+
+## What's open (carrying forward)
+
+- PIE (St. Pete-Clearwater, used for Belleair) had a ten-hour ASOS observation gap in the winter case. The pipeline needs graceful handling for observation gaps before Phase B.
+
+- Twelve points across six cities is sufficient to trust the pipeline but not large enough to draw conclusions about model-level bias or ranking.
+
+## What's next
+
+- Graceful handling for ASOS observation gaps is to be added to the pipeline.
+
+- WeatherNext temperatures are currently compared in Kelvin. Conversion to Fahrenheit for display is to be handled when Phase B wires the third lineage into the scoreboard.
+
+- Phase B begins once the gap handling is in place.
+
+## Anything surprising or worth flagging
+
+- The Chicago July ensemble distribution appeared bimodal rather than unimodal. Members split into two clusters, suggesting the model resolved two distinct weather regimes for that date. A symmetric confidence band would misrepresent this kind of distribution, which is worth tracking if a confidence-band panel is added later.
+
+- Seattle summer was the only strongly warm-biased case in the full set. Only one of 64 members came close to the observed temperature, suggesting the model does not handle marine layer suppression well in Pacific Northwest summer cases.
+
+- Denver winter produced the largest single error in the set at 10.5°F cold despite the ensemble capturing a warm scenario in some members. Wide spread did not protect against a large mean error.
+
+- San Antonio showed the largest seasonal directional flip in the set: warm-biased in winter and cold-biased in summer. No other city reversed direction by this margin across seasons.
