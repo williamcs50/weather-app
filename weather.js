@@ -667,7 +667,7 @@ function renderScoreboard(accuracy) {
       <div class="score-label">v3 · no data yet</div>
     </div>
     <p class="scoreboard-note">30-day window ending 4 days ago. One airport station per city. Early sample, not a long-term baseline.</p>
-    <p class="scoreboard-note">The scoring method changed on June 10. Earlier scores used a single forecast run per model; later scores average across all ensemble members. Numbers from before and after that date are not directly comparable.</p>
+    <p class="scoreboard-note">Metric changed June 15, 2026: replaced daily-maximum temperature with instantaneous 2m temperature at 18:00 UTC. Scores from before that date used a different metric and are not comparable to these numbers.</p>
   `;
 }
 
