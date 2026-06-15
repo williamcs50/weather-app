@@ -20,11 +20,11 @@ Bands: N/A
 
 ## What's open (carrying forward)
 
-- Add formal pre-registration for +3 day maximum temperature.
+- Formal pre-registration for +3 day maximum temperature is to be added.
 
-- Implement corrected verification using the Historical Forecast API for AIFS.
+- Corrected verification using the Historical Forecast API for AIFS is to be implemented.
 
-- Update the scoreboard.
+- The scoreboard is to be updated.
 
 
 ## Result against prediction
@@ -79,7 +79,7 @@ All results stand as measured. No re-runs.
 
 ## What's next
 
-- Phase 2: real forecast uncertainty. Confidence bands and decay driven by real ensemble spread. Prototype caveat removed.
+- Phase 2 covers real forecast uncertainty. Confidence bands and decay are to be driven by real ensemble spread. The prototype caveat is to be removed.
 
 ## Anything surprising or worth flagging
 
@@ -110,7 +110,7 @@ All results stand as measured. No re-runs.
 
 ## What's next
 
-- v3: WeatherNext (GenCast) to be added as a third comparison panel. Access granted; deferred pending gridded-data integration and licensing review (see Issue #6).
+- WeatherNext (GenCast, v3) is to be added as a third comparison panel. Access is granted; integration is deferred pending gridded-data and licensing review (see Issue #6).
 
 
 ## Anything surprising or worth flagging
@@ -229,3 +229,56 @@ All results stand as measured. No re-runs.
 - Denver winter produced the largest single error in the set at 10.5°F cold despite the ensemble capturing a warm scenario in some members. Wide spread did not protect against a large mean error.
 
 - San Antonio showed the largest seasonal directional flip in the set: warm-biased in winter and cold-biased in summer. No other city reversed direction by this margin across seasons.
+
+
+# Monday, June 15th: Phase B scoreboard migration
+
+## Pre-registration
+
+Prediction: N/A (pipeline not run today)
+
+Bands: N/A
+
+## What landed today
+
+- Committed the Phase B charter amendment, dated June 15. The non-goal blocking GFS and AIFS re-runs under the daily-maximum metric was retired. This cleared the path to running both models under the new 18 UTC metric without protocol conflict.
+
+- Migrated the GFS and AIFS scoreboard from daily-maximum temperature to instantaneous 2m temperature at 18:00 UTC. The Previous Runs API now uses timezone=UTC, and the parser filters for the T18:00 row instead of taking a daily maximum. The ASOS source switched from the daily.py endpoint to the asos.py hourly endpoint, selecting the observation closest to 18:00 UTC within a 90-minute window. Station selection was corrected to filter for ASOS provider, which fixed a silent bug where non-ASOS stations were being returned as the nearest match.
+
+- Updated the scoreboard label to describe the new metric precisely: each model's temperature forecast at 18:00 UTC, verified against the nearest airport weather station reading at that hour, not a daily high. Added a note below the scoreboard cards stating that scores before June 15 used a different metric and are not directly comparable to scores from that date forward.
+
+- Hand-checked the migrated pipeline against Belleair, FL on May 20, 2026. GFS returned 86.90°F and AIFS returned 86.54°F, both against an ASOS observation of 89°F at 17:53 UTC. GFS reproduced the migration session value exactly: a fresh pull today through the full pipeline returned 86.90°F. AIFS was independently verified for the first time under the new metric via a separate Python call; it matched the pipeline output exactly.
+
+- Updated scratch_forecast_check.py to match the new metric: asos.py hourly endpoint, T18:00 filter on the Previous Runs API, and the ASOS provider fix for station selection. The script now takes any US city and date range and produces a GFS and AIFS comparison table in one run.
+
+- Explored a BigQuery OAuth approach to add WeatherNext to the live scoreboard as a third column. The implementation was built and tested: OAuth sign-in worked, the BigQuery REST API was reached, and the query structure was correct. The project hit its free query bytes quota and returned a 403 error. The implementation was reverted. WeatherNext shows as a placeholder in the scoreboard.
+
+- Committed the migration and scratch script update to the phase-b-scoreboard branch.
+
+## What's open (carrying forward)
+
+- WeatherNext is not on the live scoreboard. The architecture is unsolved. The BigQuery quota blocks the REST API approach from the browser without billing enabled.
+
+- The WeatherNext scoreboard card currently reads "v3 · no data yet" with no explanation of why there is no data. A reader cannot distinguish a build state from an excluded model or a failure. The label needs to say something closer to "integration pending" to prevent the wrong reading.
+
+- Pre-registration for the Phase B aggregate prediction was not written. This must be done before the pipeline is run across multiple cities.
+
+- The full pipeline has not been run. No aggregate scores exist yet under the new metric.
+
+## Result against prediction
+
+- N/A (pipeline not run today)
+
+## What's next
+
+- Write the pre-registration before running the pipeline on any additional cities.
+
+- Run the scratch script across multiple cities to build up a hand-checked dataset under the new metric.
+
+- Decide on the WeatherNext architecture. The most realistic path is pre-computed JSON updated on a schedule, which avoids live BigQuery calls entirely.
+
+## Anything surprising or worth flagging
+
+- AIFS had not been independently hand-checked under the new metric before today. The Phase 1 hand-check covered AIFS under the daily-maximum metric only. The migration session recorded only the GFS value for May 20. The AIFS verification was a new check, not a reproduction of prior work. Both values came back clean.
+
+- The BigQuery OAuth approach worked technically. Authentication, token exchange, and the query structure all functioned correctly. The failure was quota, not code. The same approach could be revived if billing is enabled or if the monthly quota resets and query costs are kept small.
