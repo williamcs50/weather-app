@@ -223,18 +223,20 @@ async function fetchHistoricalAccuracy(lat, lon, stationsUrl, stateCode) {
   const stRes = await fetch(stationsUrl, { headers: { 'User-Agent': 'nws-weather-app/1.0' } });
   if (!stRes.ok) return null;
   const stData  = await stRes.json();
-  const stationK = stData.features?.[0]?.properties?.stationIdentifier;
+  const asosFeat = stData.features?.find(f => f.properties?.provider?.startsWith('ASOS'));
+  const stationK = asosFeat?.properties?.stationIdentifier;
   if (!stationK) return null;
   const station = stationK.replace(/^K/, '');  // "KORD" → "ORD"
 
-  // Iowa Mesonet: ASOS daily high (°F, already converted)
+  // Iowa Mesonet: ASOS hourly observations in UTC.
+  // We pick the single reading closest to 18:00 UTC per date.
   const [y1, m1, d1] = startStr.split('-');
   const [y2, m2, d2] = endStr.split('-');
-  const mesonetUrl = `https://mesonet.agron.iastate.edu/cgi-bin/request/daily.py`
-    + `?network=${stateCode}_ASOS&stations=${station}`
+  const mesonetUrl = `https://mesonet.agron.iastate.edu/cgi-bin/request/asos.py`
+    + `?station=${station}&data=tmpf`
     + `&year1=${y1}&month1=${m1}&day1=${d1}`
     + `&year2=${y2}&month2=${m2}&day2=${d2}`
-    + `&vars[]=max_tmpf&what=view&delim=comma`;
+    + `&tz=UTC&format=comma&latlon=no&missing=M&trace=T`;
 
   // Open-Meteo Previous Runs API: temperature_2m_previous_day3 is the hourly
   // temperature from the model run issued exactly 3 days before the valid time.
@@ -243,7 +245,7 @@ async function fetchHistoricalAccuracy(lat, lon, stationsUrl, stateCode) {
   const prevBase = `https://previous-runs-api.open-meteo.com/v1/forecast`
     + `?latitude=${lat.toFixed(4)}&longitude=${lon.toFixed(4)}`
     + `&start_date=${startStr}&end_date=${endStr}`
-    + `&hourly=temperature_2m_previous_day3&timezone=auto`;
+    + `&hourly=temperature_2m_previous_day3&timezone=UTC`;
 
   const [mesonetRes, gfsRes, aifsRes] = await Promise.all([
     fetch(mesonetUrl),
@@ -253,26 +255,46 @@ async function fetchHistoricalAccuracy(lat, lon, stationsUrl, stateCode) {
 
   if (!mesonetRes.ok) return null;
 
-  // Parse Mesonet CSV: columns are station, date (YYYY-MM-DD), max_tmpf
-  const obsMap = {};
-  (await mesonetRes.text()).trim().split('\n').slice(1).forEach(line => {
-    const cols = line.split(',');
-    if (cols.length >= 3 && cols[2] !== '' && cols[2] !== 'M') {
-      obsMap[cols[1].trim()] = parseFloat(cols[2]);
+  const asosText = await mesonetRes.text();
+
+  // Parse ASOS hourly CSV. Lines starting with '#' are comments; skip the
+  // header row ('station,valid,tmpf'). For each date keep the single observation
+  // closest to 18:00 UTC within a 90-minute window. Dates with no observation
+  // in that window are simply absent from obsMap and excluded from scoring.
+  const obsMap   = {};
+  const bestMins = {};
+  const WINDOW   = 90;
+  asosText.split('\n').forEach(line => {
+    const l = line.trim();
+    if (!l || l.startsWith('#') || l.startsWith('station,')) return;
+    const cols = l.split(',');
+    if (cols.length < 3) return;
+    const ts   = cols[1].trim();   // "2024-01-15 18:51"
+    const tmpf = cols[2].trim();
+    if (!tmpf || tmpf === 'M' || tmpf === 'T') return;
+
+    const date       = ts.slice(0, 10);
+    const hh         = parseInt(ts.slice(11, 13), 10);
+    const mm         = parseInt(ts.slice(14, 16), 10);
+    const minsFrom18 = Math.abs(hh * 60 + mm - 18 * 60);
+    if (minsFrom18 > WINDOW) return;
+
+    if (bestMins[date] == null || minsFrom18 < bestMins[date]) {
+      obsMap[date]   = parseFloat(tmpf);
+      bestMins[date] = minsFrom18;
     }
   });
 
-  // Derive daily max °F from hourly Previous Runs data
-  function parseDailyMaxF(json) {
+  // Extract the +3-day-lead forecast valid at exactly 18:00 UTC per date.
+  // With timezone=UTC, time strings are "YYYY-MM-DDTHH:00"; T18:00 is unambiguous.
+  function parse18UtcF(json) {
     const map   = {};
     const times = json?.hourly?.time ?? [];
     const temps = json?.hourly?.temperature_2m_previous_day3 ?? [];
     times.forEach((t, i) => {
-      const day = t.slice(0, 10);
-      const c   = temps[i];
-      if (c != null) {
-        const f = c * 9 / 5 + 32;
-        if (map[day] == null || f > map[day]) map[day] = f;
+      if (t.endsWith('T18:00')) {
+        const c = temps[i];
+        if (c != null) map[t.slice(0, 10)] = c * 9 / 5 + 32;
       }
     });
     return map;
@@ -283,8 +305,8 @@ async function fetchHistoricalAccuracy(lat, lon, stationsUrl, stateCode) {
     aifsRes.ok ? aifsRes.json() : Promise.resolve(null),
   ]);
 
-  const gfsMap  = parseDailyMaxF(gfsJson);
-  const aifsMap = parseDailyMaxF(aifsJson);
+  const gfsMap  = parse18UtcF(gfsJson);
+  const aifsMap = parse18UtcF(aifsJson);
 
   // MAE: only dates where both observation and forecast are present — no interpolation
   let gfsAbsErr = 0, gfsDays = 0;
@@ -385,9 +407,9 @@ function renderForecast(nwsPeriods, aifsPeriods, city, state, ensembleData) {
     <section class="feature-section">
       <div class="section-header-row">
         <div class="section-title">Model accuracy scoreboard</div>
-        <div class="section-meta">3 days ahead · daily high temperature · average error in °F</div>
+        <div class="section-meta">3 days ahead · temperature at 18 UTC · average error in °F</div>
       </div>
-      <div class="section-subtitle">Forecasts as issued 3 days ahead, verified against airport weather station readings</div>
+      <div class="section-subtitle">Each model's temperature forecast at 18:00 UTC, roughly midday to early afternoon across the contiguous US, verified against the nearest airport weather station reading at that hour. Not a daily high.</div>
       <div class="scoreboard-cards" id="scoreboard-cards">
         <div class="score-loading">Loading historical data…</div>
       </div>
