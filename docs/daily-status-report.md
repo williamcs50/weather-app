@@ -282,3 +282,35 @@ Bands: N/A
 - AIFS had not been independently hand-checked under the new metric before today. The Phase 1 hand-check covered AIFS under the daily-maximum metric only. The migration session recorded only the GFS value for May 20. The AIFS verification was a new check, not a reproduction of prior work. Both values came back clean.
 
 - The BigQuery OAuth approach worked technically. Authentication, token exchange, and the query structure all functioned correctly. The failure was quota, not code. The same approach could be revived if billing is enabled or if the monthly quota resets and query costs are kept small.
+
+
+# Tuesday, June 16th: Phase B WeatherNext integration
+
+## Pre-registration
+
+Prediction: All three models (GFS, AIFS, and WeatherNext) will fall in the 3–7°F MAE range. Ranking: AIFS wins, GFS second, and WeatherNext third.
+
+Bands: Below 2°F for any model is suspiciously good, check the pipeline. Above 10°F for any model is suspiciously bad, check the pipeline. If WeatherNext beats GFS or AIFS in the aggregate, verify before accepting.
+
+Note: Belleair, FL was run as a pipeline verification before this prediction was written: GFS 3.6°F, AIFS 3.7°F, WeatherNext 5.1°F. The remaining five cities are unseen.
+
+
+## What landed today
+
+-
+
+## What's open (carrying forward)
+
+-
+
+## Result against prediction
+
+-
+
+## What's next
+
+-
+
+## Anything surprising or worth flagging
+
+-

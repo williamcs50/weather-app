@@ -209,6 +209,15 @@ function parseEnsemblePeriods(data) {
     .slice(0, 8);
 }
 
+function findClosestCity(cities, lat, lon, threshold) {
+  let best = null, bestDist = Infinity;
+  for (const [, city] of Object.entries(cities)) {
+    const dist = Math.sqrt((city.lat - lat) ** 2 + (city.lon - lon) ** 2);
+    if (dist < bestDist) { bestDist = dist; best = city; }
+  }
+  return bestDist <= threshold ? best : null;
+}
+
 async function fetchHistoricalAccuracy(lat, lon, stationsUrl, stateCode) {
   // Measure real forecast skill: forecasts as issued at +3-day lead on daily max °F,
   // verified against Iowa Mesonet ASOS observations. Both models through identical pipeline.
@@ -247,10 +256,11 @@ async function fetchHistoricalAccuracy(lat, lon, stationsUrl, stateCode) {
     + `&start_date=${startStr}&end_date=${endStr}`
     + `&hourly=temperature_2m_previous_day3&timezone=UTC`;
 
-  const [mesonetRes, gfsRes, aifsRes] = await Promise.all([
+  const [mesonetRes, gfsRes, aifsRes, wnRes] = await Promise.all([
     fetch(mesonetUrl),
     fetch(`${prevBase}&models=gfs_seamless`),
     fetch(`${prevBase}&models=ecmwf_aifs025_single`),
+    fetch('data/weathernext_scores.json').catch(() => null),
   ]);
 
   if (!mesonetRes.ok) return null;
@@ -300,17 +310,23 @@ async function fetchHistoricalAccuracy(lat, lon, stationsUrl, stateCode) {
     return map;
   }
 
-  const [gfsJson, aifsJson] = await Promise.all([
+  const [gfsJson, aifsJson, wnData] = await Promise.all([
     gfsRes.ok  ? gfsRes.json()  : Promise.resolve(null),
     aifsRes.ok ? aifsRes.json() : Promise.resolve(null),
+    wnRes && wnRes.ok ? wnRes.json().catch(() => null) : Promise.resolve(null),
   ]);
 
   const gfsMap  = parse18UtcF(gfsJson);
   const aifsMap = parse18UtcF(aifsJson);
 
+  // WeatherNext: match city by lat/lon proximity (0.5° threshold covers same metro area)
+  const wnCity = wnData ? findClosestCity(wnData.cities ?? {}, lat, lon, 0.5) : null;
+  const wnMap  = wnCity ? wnCity.forecasts ?? {} : null;
+
   // MAE: only dates where both observation and forecast are present — no interpolation
   let gfsAbsErr = 0, gfsDays = 0;
   let aifsAbsErr = 0, aifsDays = 0;
+  let wnAbsErr = 0,  wnDays = 0;
 
   Object.keys(obsMap).forEach(date => {
     const obs = obsMap[date];
@@ -320,13 +336,19 @@ async function fetchHistoricalAccuracy(lat, lon, stationsUrl, stateCode) {
 
     const aifsPred = aifsMap[date];
     if (aifsPred != null) { aifsAbsErr += Math.abs(obs - aifsPred); aifsDays++; }
+
+    const wnEntry = wnMap ? wnMap[date] : null;
+    if (wnEntry != null) { wnAbsErr += Math.abs(obs - wnEntry.forecast_f); wnDays++; }
   });
 
   return {
     gfsMae:   gfsDays  > 0 ? Math.round(gfsAbsErr  / gfsDays  * 10) / 10 : null,
     aifsMae:  aifsDays > 0 ? Math.round(aifsAbsErr / aifsDays * 10) / 10 : null,
+    wnMae:    wnDays   > 0 ? Math.round(wnAbsErr   / wnDays   * 10) / 10 : null,
     gfsDays,
     aifsDays,
+    wnDays,
+    wnCityFound: wnMap !== null,
   };
 }
 
@@ -661,10 +683,10 @@ function renderScoreboard(accuracy) {
       <div class="score-pct">${accuracy.aifsMae != null ? accuracy.aifsMae + '°F' : '—'}</div>
       <div class="score-label">average error · ${accuracy.aifsDays} days</div>
     </div>
-    <div class="score-card score-card-dm">
-      <div class="score-src model-dm">DeepMind</div>
-      <div class="score-pct score-pct-dm">—</div>
-      <div class="score-label">v3 · no data yet</div>
+    <div class="score-card score-card-dm${accuracy.wnCityFound && accuracy.wnDays > 0 ? '' : ' pending'}">
+      <div class="score-src model-dm">WeatherNext <span class="score-sub">(GenCast v3)</span></div>
+      <div class="score-pct${accuracy.wnCityFound && accuracy.wnDays > 0 ? '' : ' score-pct-dm'}">${accuracy.wnMae != null ? accuracy.wnMae + '°F' : '—'}</div>
+      <div class="score-label">${accuracy.wnCityFound ? (accuracy.wnDays > 0 ? `average error · ${accuracy.wnDays} days` : 'no overlapping dates') : 'no pre-computed data for this city'}</div>
     </div>
     <p class="scoreboard-note">30-day window ending 4 days ago. One airport station per city. Early sample, not a long-term baseline.</p>
     <p class="scoreboard-note">Metric changed June 15, 2026: replaced daily-maximum temperature with instantaneous 2m temperature at 18:00 UTC. Scores from before that date used a different metric and are not comparable to these numbers.</p>

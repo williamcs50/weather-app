@@ -268,7 +268,8 @@ h3 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; colo
 .score-card       { border: 1px solid #e0e4ea; border-radius: 8px; padding: 0.85rem 1rem; }
 .score-card-gfs   { background: linear-gradient(135deg, #e8f0fe 0%, #f8fbff 100%); }
 .score-card-aifs  { background: linear-gradient(135deg, #e6f4ea 0%, #f6fdf7 100%); }
-.score-card-dm    { background: linear-gradient(135deg, #ede9fe 0%, #f5f3ff 100%); opacity: 0.7; }
+.score-card-dm         { background: linear-gradient(135deg, #ede9fe 0%, #f5f3ff 100%); }
+.score-card-dm.pending { opacity: 0.7; }
 .score-src        { font-size: 0.82rem; font-weight: 600; color: #333; margin-bottom: 0.3rem; }
 .score-sub        { font-size: 0.72rem; font-weight: 400; color: #888; }
 .score-pct        { font-size: 2rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.15rem; }

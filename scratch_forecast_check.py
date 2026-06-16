@@ -1,7 +1,16 @@
 import urllib.request, urllib.parse, json
+from datetime import datetime, timedelta
 
-START = "2026-06-10"
-END   = "2026-06-10"
+try:
+    from google.cloud import bigquery as bq
+    _BQ = True
+except ImportError:
+    _BQ = False
+
+START = "2026-05-20"
+END   = "2026-05-20"
+
+WN_TABLE = "gen-lang-client-0473545431.weathernext_2.weathernext_2_0_0"
 
 def get(url, headers=None):
     req = urllib.request.Request(url, headers=headers or {})
@@ -84,7 +93,42 @@ for model in ["gfs_seamless", "ecmwf_aifs025_single"]:
     forecasts[model] = parse_18utc_f(data["hourly"]["time"],
                                      data["hourly"]["temperature_2m_previous_day3"])
 
-all_dates = sorted(set(mesonet) | set(forecasts["gfs_seamless"]) | set(forecasts["ecmwf_aifs025_single"]))
+# ── WeatherNext: BigQuery ensemble mean, forecast.time filter ─────────────
+def wn_18utc(lat, lon, start, end):
+    if not _BQ:
+        print("  (google-cloud-bigquery not installed — WeatherNext skipped)")
+        return {}
+    client = bq.Client(project="gen-lang-client-0473545431")
+    results = {}
+    d     = datetime.strptime(start, "%Y-%m-%d")
+    end_d = datetime.strptime(end,   "%Y-%m-%d")
+    while d <= end_d:
+        target = d.strftime("%Y-%m-%d")
+        init   = (d - timedelta(days=3)).strftime("%Y-%m-%d")
+        sql = f"""
+        SELECT
+          AVG(ensemble.`2m_temperature`) AS mean_k,
+          forecast.hours                 AS forecast_hours,
+          COUNT(*)                       AS member_count
+        FROM `{WN_TABLE}` AS t1,
+             UNNEST(forecast) AS forecast,
+             UNNEST(ensemble) AS ensemble
+        WHERE
+          ST_CONTAINS(t1.geography_polygon, ST_GEOGPOINT({lon}, {lat}))
+          AND t1.init_time  = TIMESTAMP('{init} 00:00:00 UTC')
+          AND forecast.time = TIMESTAMP('{target} 18:00:00 UTC')
+        GROUP BY forecast.hours
+        """
+        rows = list(client.query(sql).result())
+        if rows and rows[0].mean_k is not None:
+            mean_f = (rows[0].mean_k - 273.15) * 9 / 5 + 32
+            results[target] = (round(mean_f, 2), int(rows[0].forecast_hours), int(rows[0].member_count))
+        d += timedelta(days=1)
+    return results
+
+wn = wn_18utc(LAT, LON, START, END)
+
+all_dates = sorted(set(mesonet) | set(forecasts["gfs_seamless"]) | set(forecasts["ecmwf_aifs025_single"]) | set(wn))
 
 def fmt(val, obs):
     if val is None or obs is None:
@@ -95,11 +139,12 @@ def fmt(val, obs):
 
 # ── Comparison table ──────────────────────────────────────────────────────
 print(f"\n{city}  |  +3-day lead  |  18:00 UTC  |  {START} -> {END}\n")
-print(f"{'Date':<12}  {'ASOS':>14}  {'GFS (err)':>18}  {'AIFS (err)':>18}")
-print("─" * 68)
+print(f"{'Date':<12}  {'ASOS':>14}  {'GFS (err)':>18}  {'AIFS (err)':>18}  {'WN (err)':>18}")
+print("─" * 90)
 for d in all_dates:
     obs_val, obs_ts = mesonet.get(d, (None, None))
     g = forecasts["gfs_seamless"].get(d)
     a = forecasts["ecmwf_aifs025_single"].get(d)
+    wn_val = wn[d][0] if d in wn else None
     obs_str = f"{obs_val}°F @{obs_ts}" if obs_val else "—"
-    print(f"{d:<12}  {obs_str:>14}  {fmt(g, obs_val):>18}  {fmt(a, obs_val):>18}")
+    print(f"{d:<12}  {obs_str:>14}  {fmt(g, obs_val):>18}  {fmt(a, obs_val):>18}  {fmt(wn_val, obs_val):>18}")
