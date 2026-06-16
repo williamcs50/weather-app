@@ -260,7 +260,7 @@ async function fetchHistoricalAccuracy(lat, lon, stationsUrl, stateCode) {
     fetch(mesonetUrl),
     fetch(`${prevBase}&models=gfs_seamless`),
     fetch(`${prevBase}&models=ecmwf_aifs025_single`),
-    fetch('data/weathernext_scores.json').catch(() => null),
+    fetch(`data/weathernext_scores.json?t=${Date.now()}`).catch(() => null),
   ]);
 
   if (!mesonetRes.ok) return null;
@@ -540,10 +540,10 @@ function renderConfidenceCards(nwsPeriods, aifsPeriods, ensembleData) {
     <div class="conf-card conf-dm">
       <div class="conf-hdr">
         <span class="conf-src">DeepMind <span class="conf-sub">machine learning (v3)</span></span>
-        <span class="conf-badge badge-pending">PENDING</span>
+        <span class="conf-badge badge-pending">HISTORIC ONLY</span>
       </div>
       <div class="conf-temp conf-pending-val">—</div>
-      <div class="conf-range">access granted · integration pending</div>
+      <div class="conf-range">historic data only · forward forecasts not available under current license</div>
     </div>
   `;
 }
@@ -614,7 +614,7 @@ function renderDecayChart(nwsPeriods, aifsPeriods, ensembleData) {
     </div>
     <div class="decay-card decay-card-dm">
       <div class="decay-model model-dm">DeepMind</div>
-      <div class="decay-label">v3 pending</div>
+      <div class="decay-label">historic data only</div>
     </div>
   `;
 }
