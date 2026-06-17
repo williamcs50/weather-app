@@ -240,7 +240,10 @@ async function fetchHistoricalAccuracy(lat, lon, stationsUrl, stateCode) {
   // Iowa Mesonet: ASOS hourly observations in UTC.
   // We pick the single reading closest to 18:00 UTC per date.
   const [y1, m1, d1] = startStr.split('-');
-  const [y2, m2, d2] = endStr.split('-');
+  // Mesonet treats the end date as exclusive on multi-day requests, so add one day
+  // to ensure the final day of the window is included.
+  const mesonetEnd = new Date(end); mesonetEnd.setDate(mesonetEnd.getDate() + 1);
+  const [y2, m2, d2] = fmt(mesonetEnd).split('-');
   const mesonetUrl = `https://mesonet.agron.iastate.edu/cgi-bin/request/asos.py`
     + `?station=${station}&data=tmpf`
     + `&year1=${y1}&month1=${m1}&day1=${d1}`
@@ -429,7 +432,7 @@ function renderForecast(nwsPeriods, aifsPeriods, city, state, ensembleData) {
     <section class="feature-section">
       <div class="section-header-row">
         <div class="section-title">Model accuracy scoreboard</div>
-        <div class="section-meta">3 days ahead · temperature at 18 UTC · average error in °F</div>
+        <div class="section-meta">3 days ahead · temperature at 18 UTC · average error in °F · lower is better</div>
       </div>
       <div class="section-subtitle">Each model's temperature forecast at 18:00 UTC, roughly midday to early afternoon across the contiguous US, verified against the nearest airport weather station reading at that hour. Not a daily high.</div>
       <div class="scoreboard-cards" id="scoreboard-cards">
@@ -690,6 +693,7 @@ function renderScoreboard(accuracy) {
     </div>
     <p class="scoreboard-note">30-day window ending 4 days ago. One airport station per city. Early sample, not a long-term baseline.</p>
     <p class="scoreboard-note">Metric changed June 15, 2026: replaced daily-maximum temperature with instantaneous 2m temperature at 18:00 UTC. Scores from before that date used a different metric and are not comparable to these numbers.</p>
+    <p class="scoreboard-note">WeatherNext is an experimental model, not approved for operational or safety-critical use. Scores are for research and comparison purposes only.</p>
   `;
 }
 

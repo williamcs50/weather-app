@@ -26,6 +26,8 @@ A pre-registration document (`docs/pre-registration.md`) was committed before ea
 
 **Note on ensemble methodology.** Early Phase 1 results used deterministic GFS and AIFS runs as point forecasts. Phase 2 switched both to ensemble means (GFS Ensemble 0.25 degrees, 31 members; AIFS 0.25 degrees, 51 members), and derived uncertainty bands directly from member spread. Phase 1 and Phase 2 scoreboard results are not directly comparable.
 
+**Note on AIFS archive stability.** The Previous Runs API is designed to serve forecasts as originally issued, but Open-Meteo has been observed to silently revise AIFS values in the archive after the fact. During Phase B verification, Chicago AIFS values changed between June 15 and June 17, 2026 with no changelog. GFS values for the same dates did not change. This means AIFS scoreboard results may not be perfectly reproducible if the archive is queried on a different date. The pipeline correctly fetches whatever the archive holds at query time, but the "forecasts as issued" guarantee depends on upstream data fidelity that this project cannot control.
+
 ## Roadmap
 
 - Phase 1: deterministic GFS vs. AIFS point forecast comparison. Complete.

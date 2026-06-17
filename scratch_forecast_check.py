@@ -1,4 +1,4 @@
-import urllib.request, urllib.parse, json
+import argparse, urllib.request, urllib.parse, json
 from datetime import datetime, timedelta
 
 try:
@@ -7,9 +7,6 @@ try:
 except ImportError:
     _BQ = False
 
-START = "2026-05-20"
-END   = "2026-05-20"
-
 WN_TABLE = "gen-lang-client-0473545431.weathernext_2.weathernext_2_0_0"
 
 def get(url, headers=None):
@@ -17,16 +14,32 @@ def get(url, headers=None):
     with urllib.request.urlopen(req, timeout=15) as r:
         return json.loads(r.read())
 
-# ── Geocode ───────────────────────────────────────────────────────────────
-city  = input("City, State (e.g. Chicago, IL): ").strip()
-parts = [p.strip() for p in city.split(",")]
-state = parts[1] if len(parts) > 1 else ""
-q     = urllib.parse.urlencode({"city": parts[0], "state": state, "country": "US", "format": "json", "limit": 1})
-geo   = get(f"https://nominatim.openstreetmap.org/search?{q}", {"User-Agent": "nws-weather-app/1.0"})
-if not geo:
-    raise SystemExit("City not found.")
-LAT, LON = float(geo[0]["lat"]), float(geo[0]["lon"])
-print(f"  -> {geo[0]['display_name'][:60]}  ({LAT:.4f}, {LON:.4f})\n")
+ap = argparse.ArgumentParser()
+ap.add_argument("--lat",  type=float)
+ap.add_argument("--lon",  type=float)
+ap.add_argument("--date", type=str)
+args = ap.parse_args()
+
+# ── Coordinates ───────────────────────────────────────────────────────────
+if args.lat is not None and args.lon is not None:
+    LAT, LON = args.lat, args.lon
+    label = f"{LAT}, {LON}"
+    print(f"  -> using stored coords ({LAT}, {LON})\n")
+else:
+    city  = input("City, State (e.g. Chicago, IL): ").strip()
+    parts = [p.strip() for p in city.split(",")]
+    state = parts[1] if len(parts) > 1 else ""
+    q     = urllib.parse.urlencode({"city": parts[0], "state": state, "country": "US", "format": "json", "limit": 1})
+    geo   = get(f"https://nominatim.openstreetmap.org/search?{q}", {"User-Agent": "nws-weather-app/1.0"})
+    if not geo:
+        raise SystemExit("City not found.")
+    LAT, LON = float(geo[0]["lat"]), float(geo[0]["lon"])
+    label = city
+    print(f"  -> {geo[0]['display_name'][:60]}  ({LAT:.4f}, {LON:.4f})\n")
+
+# ── Date range ────────────────────────────────────────────────────────────
+date_str = args.date or "2026-05-20"
+START = END = date_str
 
 # ── Nearest ASOS station via NWS /points ─────────────────────────────────
 nws_pts  = get(f"https://api.weather.gov/points/{LAT:.4f},{LON:.4f}", {"User-Agent": "nws-weather-app/1.0"})
@@ -138,7 +151,7 @@ def fmt(val, obs):
     return f"{val:>6.2f} ({sign}{diff:.2f})"
 
 # ── Comparison table ──────────────────────────────────────────────────────
-print(f"\n{city}  |  +3-day lead  |  18:00 UTC  |  {START} -> {END}\n")
+print(f"\n{label}  |  +3-day lead  |  18:00 UTC  |  {START} -> {END}\n")
 print(f"{'Date':<12}  {'ASOS':>14}  {'GFS (err)':>18}  {'AIFS (err)':>18}  {'WN (err)':>18}")
 print("─" * 90)
 for d in all_dates:

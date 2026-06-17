@@ -413,3 +413,63 @@ These results reflect a warm-season window only. A longer or cross-season sample
 - Denver drove the GFS/WeatherNext ranking swap. GFS at 5.5°F is the worst single-city score in the table. WeatherNext at 2.7°F is the best. Complex terrain at the base of the Rockies produces genuine forecast difficulty and GFS appears most affected by it in this sample.
 
 - Belleair carries 17% of the WeatherNext six-city average and is WeatherNext's worst result at 5.1°F. Without Belleair, WeatherNext's average drops to approximately 2.76°F, essentially tied with AIFS. The six-city aggregate is sensitive to this one result and the small sample size should be kept in mind when reading the ranking.
+
+# Wednesday, June 17th: Phase B verification close-out and Mesonet bug fix
+
+## What landed today
+
+- Completed all three Phase B verification tasks: eleven-point pipeline calibration, San Antonio raw-measurement confirmation, and all-three-coverage check. All three passed.
+
+- Found and fixed a methodology bug: Iowa Mesonet's `asos.py` endpoint treats the end date as exclusive on multi-day requests. The pipeline was requesting `day2=12` when the intended last date was June 12, silently dropping that date for every city. Fixed in `weather.js` and `scripts/coverage_check.py` by adding one day to the end date before constructing the Mesonet URL. This is a methodology bug under the charter, not result-chasing. The correct window is 30 days and the pipeline was silently computing 29.
+
+- Recomputed the six-city aggregate on the corrected 30-day window using `scripts/recompute_mae.py`, which queries BigQuery directly for WeatherNext so results are independent of the rolling JSON window.
+
+- Found that the Open-Meteo AIFS archive silently revised values for Chicago between June 15 and June 17. The original scoreboard recorded Chicago AIFS at 3.0°F; fresh data shows 4.5°F. GFS for Chicago is unchanged across the same dates. This means the old 29-day AIFS aggregate (2.77°F) cannot be exactly reproduced from a fresh query today. Documented in README as a known upstream data fidelity limitation.
+
+- Documented `scratch_forecast_check.py --lat/--lon` flags so hand-checks use stored coordinates and avoid coordinate divergence.
+
+## Amendment: corrected 30-day results (May 14 to June 12)
+
+Recomputed using `scripts/recompute_mae.py` with BigQuery for WeatherNext. Old column reflects the buggy 29-day window (June 12 dropped). New column is the corrected 30-day window.
+
+| City | GFS (29d) | AIFS (29d) | WN (29d) | GFS (30d) | AIFS (30d) | WN (30d) |
+|---|---|---|---|---|---|---|
+| Belleair, FL | 3.6°F | 3.7°F | 5.1°F | 3.5°F | 3.6°F | 4.9°F |
+| Chicago, IL | 6.0°F | 4.5°F | 3.9°F | 5.8°F | 4.5°F | 3.8°F |
+| San Diego, CA | 2.3°F | 2.8°F | 2.8°F | 2.3°F | 2.8°F | 3.0°F |
+| San Antonio, TX | 3.3°F | 1.8°F | 2.1°F | 3.2°F | 1.7°F | 2.1°F |
+| Denver, CO | 5.5°F | 3.1°F | 2.7°F | 5.4°F | 3.1°F | 2.7°F |
+| Seattle, WA | 3.3°F | 2.4°F | 2.3°F | 3.3°F | 2.4°F | 2.3°F |
+| Six-city avg | 4.00°F | 3.05°F | 3.15°F | 3.92°F | 3.02°F | 3.13°F |
+
+Rankings are unchanged across both windows: AIFS first, WeatherNext second, GFS third. The shifts from adding June 12 are small and directionally consistent with a legitimate bug fix rather than result-chasing.
+
+Note: the old 29-day AIFS aggregate above (3.05°F) differs from the 2.77°F recorded on June 16 due to the Open-Meteo AIFS archive revision for Chicago. The June 16 number was correct at time of recording. The 3.05°F is what the archive returns today on the same dates.
+
+---
+
+# Wednesday, June 17th: Phase C compliance and close-out
+
+## Pre-registration
+
+No new prediction. Phase C is compliance and documentation only.
+
+## What landed today
+
+- 
+
+## What's open (carrying forward)
+
+- 
+
+## Result against prediction
+
+N/A
+
+## What's next
+
+- 
+
+## Anything surprising or worth flagging
+
+- 
