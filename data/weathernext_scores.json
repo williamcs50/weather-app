@@ -1,0 +1,1519 @@
+{
+  "generated_at": "2026-06-17T15:36:30.568564+00:00",
+  "window_start": "2026-05-15",
+  "window_end": "2026-06-13",
+  "cities": {
+    "Chicago, IL": {
+      "lat": 41.8781,
+      "lon": -87.6298,
+      "forecasts": {
+        "2026-05-15": {
+          "forecast_f": 66.4868,
+          "init_time": "2026-05-12T00:00:00Z",
+          "valid_time": "2026-05-15T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-16": {
+          "forecast_f": 76.4766,
+          "init_time": "2026-05-13T00:00:00Z",
+          "valid_time": "2026-05-16T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-17": {
+          "forecast_f": 72.9341,
+          "init_time": "2026-05-14T00:00:00Z",
+          "valid_time": "2026-05-17T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-18": {
+          "forecast_f": 72.0372,
+          "init_time": "2026-05-15T00:00:00Z",
+          "valid_time": "2026-05-18T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-19": {
+          "forecast_f": 76.0073,
+          "init_time": "2026-05-16T00:00:00Z",
+          "valid_time": "2026-05-19T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-20": {
+          "forecast_f": 54.4398,
+          "init_time": "2026-05-17T00:00:00Z",
+          "valid_time": "2026-05-20T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-21": {
+          "forecast_f": 55.6257,
+          "init_time": "2026-05-18T00:00:00Z",
+          "valid_time": "2026-05-21T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-22": {
+          "forecast_f": 56.8232,
+          "init_time": "2026-05-19T00:00:00Z",
+          "valid_time": "2026-05-22T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-23": {
+          "forecast_f": 60.1465,
+          "init_time": "2026-05-20T00:00:00Z",
+          "valid_time": "2026-05-23T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-24": {
+          "forecast_f": 68.9111,
+          "init_time": "2026-05-21T00:00:00Z",
+          "valid_time": "2026-05-24T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-25": {
+          "forecast_f": 77.1323,
+          "init_time": "2026-05-22T00:00:00Z",
+          "valid_time": "2026-05-25T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-26": {
+          "forecast_f": 75.997,
+          "init_time": "2026-05-23T00:00:00Z",
+          "valid_time": "2026-05-26T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-27": {
+          "forecast_f": 74.3985,
+          "init_time": "2026-05-24T00:00:00Z",
+          "valid_time": "2026-05-27T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-28": {
+          "forecast_f": 65.2723,
+          "init_time": "2026-05-25T00:00:00Z",
+          "valid_time": "2026-05-28T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-29": {
+          "forecast_f": 72.2178,
+          "init_time": "2026-05-26T00:00:00Z",
+          "valid_time": "2026-05-29T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-30": {
+          "forecast_f": 66.024,
+          "init_time": "2026-05-27T00:00:00Z",
+          "valid_time": "2026-05-30T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-31": {
+          "forecast_f": 69.1821,
+          "init_time": "2026-05-28T00:00:00Z",
+          "valid_time": "2026-05-31T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-01": {
+          "forecast_f": 68.5992,
+          "init_time": "2026-05-29T00:00:00Z",
+          "valid_time": "2026-06-01T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-02": {
+          "forecast_f": 69.1704,
+          "init_time": "2026-05-30T00:00:00Z",
+          "valid_time": "2026-06-02T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-03": {
+          "forecast_f": 76.9533,
+          "init_time": "2026-05-31T00:00:00Z",
+          "valid_time": "2026-06-03T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-04": {
+          "forecast_f": 82.5013,
+          "init_time": "2026-06-01T00:00:00Z",
+          "valid_time": "2026-06-04T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-05": {
+          "forecast_f": 77.4424,
+          "init_time": "2026-06-02T00:00:00Z",
+          "valid_time": "2026-06-05T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-06": {
+          "forecast_f": 81.0583,
+          "init_time": "2026-06-03T00:00:00Z",
+          "valid_time": "2026-06-06T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-07": {
+          "forecast_f": 76.9134,
+          "init_time": "2026-06-04T00:00:00Z",
+          "valid_time": "2026-06-07T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-08": {
+          "forecast_f": 77.0212,
+          "init_time": "2026-06-05T00:00:00Z",
+          "valid_time": "2026-06-08T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-09": {
+          "forecast_f": 81.1086,
+          "init_time": "2026-06-06T00:00:00Z",
+          "valid_time": "2026-06-09T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-10": {
+          "forecast_f": 84.5072,
+          "init_time": "2026-06-07T00:00:00Z",
+          "valid_time": "2026-06-10T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-11": {
+          "forecast_f": 77.6806,
+          "init_time": "2026-06-08T00:00:00Z",
+          "valid_time": "2026-06-11T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-12": {
+          "forecast_f": 76.9214,
+          "init_time": "2026-06-09T00:00:00Z",
+          "valid_time": "2026-06-12T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-13": {
+          "forecast_f": 82.3305,
+          "init_time": "2026-06-10T00:00:00Z",
+          "valid_time": "2026-06-13T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        }
+      }
+    },
+    "San Diego, CA": {
+      "lat": 32.7157,
+      "lon": -117.1611,
+      "forecasts": {
+        "2026-05-15": {
+          "forecast_f": 63.8316,
+          "init_time": "2026-05-12T00:00:00Z",
+          "valid_time": "2026-05-15T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-16": {
+          "forecast_f": 64.4931,
+          "init_time": "2026-05-13T00:00:00Z",
+          "valid_time": "2026-05-16T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-17": {
+          "forecast_f": 63.7587,
+          "init_time": "2026-05-14T00:00:00Z",
+          "valid_time": "2026-05-17T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-18": {
+          "forecast_f": 63.9678,
+          "init_time": "2026-05-15T00:00:00Z",
+          "valid_time": "2026-05-18T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-19": {
+          "forecast_f": 67.1646,
+          "init_time": "2026-05-16T00:00:00Z",
+          "valid_time": "2026-05-19T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-20": {
+          "forecast_f": 65.5153,
+          "init_time": "2026-05-17T00:00:00Z",
+          "valid_time": "2026-05-20T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-21": {
+          "forecast_f": 64.1077,
+          "init_time": "2026-05-18T00:00:00Z",
+          "valid_time": "2026-05-21T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-22": {
+          "forecast_f": 64.634,
+          "init_time": "2026-05-19T00:00:00Z",
+          "valid_time": "2026-05-22T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-23": {
+          "forecast_f": 64.5778,
+          "init_time": "2026-05-20T00:00:00Z",
+          "valid_time": "2026-05-23T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-24": {
+          "forecast_f": 64.5107,
+          "init_time": "2026-05-21T00:00:00Z",
+          "valid_time": "2026-05-24T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-25": {
+          "forecast_f": 64.1683,
+          "init_time": "2026-05-22T00:00:00Z",
+          "valid_time": "2026-05-25T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-26": {
+          "forecast_f": 63.3449,
+          "init_time": "2026-05-23T00:00:00Z",
+          "valid_time": "2026-05-26T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-27": {
+          "forecast_f": 62.3915,
+          "init_time": "2026-05-24T00:00:00Z",
+          "valid_time": "2026-05-27T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-28": {
+          "forecast_f": 64.1204,
+          "init_time": "2026-05-25T00:00:00Z",
+          "valid_time": "2026-05-28T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-29": {
+          "forecast_f": 64.1158,
+          "init_time": "2026-05-26T00:00:00Z",
+          "valid_time": "2026-05-29T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-30": {
+          "forecast_f": 64.0096,
+          "init_time": "2026-05-27T00:00:00Z",
+          "valid_time": "2026-05-30T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-31": {
+          "forecast_f": 64.5713,
+          "init_time": "2026-05-28T00:00:00Z",
+          "valid_time": "2026-05-31T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-01": {
+          "forecast_f": 64.427,
+          "init_time": "2026-05-29T00:00:00Z",
+          "valid_time": "2026-06-01T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-02": {
+          "forecast_f": 64.5415,
+          "init_time": "2026-05-30T00:00:00Z",
+          "valid_time": "2026-06-02T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-03": {
+          "forecast_f": 64.2349,
+          "init_time": "2026-05-31T00:00:00Z",
+          "valid_time": "2026-06-03T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-04": {
+          "forecast_f": 65.676,
+          "init_time": "2026-06-01T00:00:00Z",
+          "valid_time": "2026-06-04T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-05": {
+          "forecast_f": 65.2198,
+          "init_time": "2026-06-02T00:00:00Z",
+          "valid_time": "2026-06-05T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-06": {
+          "forecast_f": 65.5861,
+          "init_time": "2026-06-03T00:00:00Z",
+          "valid_time": "2026-06-06T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-07": {
+          "forecast_f": 65.7401,
+          "init_time": "2026-06-04T00:00:00Z",
+          "valid_time": "2026-06-07T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-08": {
+          "forecast_f": 66.182,
+          "init_time": "2026-06-05T00:00:00Z",
+          "valid_time": "2026-06-08T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-09": {
+          "forecast_f": 66.4146,
+          "init_time": "2026-06-06T00:00:00Z",
+          "valid_time": "2026-06-09T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-10": {
+          "forecast_f": 67.078,
+          "init_time": "2026-06-07T00:00:00Z",
+          "valid_time": "2026-06-10T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-11": {
+          "forecast_f": 68.0613,
+          "init_time": "2026-06-08T00:00:00Z",
+          "valid_time": "2026-06-11T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-12": {
+          "forecast_f": 68.6779,
+          "init_time": "2026-06-09T00:00:00Z",
+          "valid_time": "2026-06-12T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-13": {
+          "forecast_f": 68.637,
+          "init_time": "2026-06-10T00:00:00Z",
+          "valid_time": "2026-06-13T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        }
+      }
+    },
+    "Belleair, FL": {
+      "lat": 27.9342,
+      "lon": -82.8043,
+      "forecasts": {
+        "2026-05-15": {
+          "forecast_f": 81.1776,
+          "init_time": "2026-05-12T00:00:00Z",
+          "valid_time": "2026-05-15T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-16": {
+          "forecast_f": 83.9244,
+          "init_time": "2026-05-13T00:00:00Z",
+          "valid_time": "2026-05-16T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-17": {
+          "forecast_f": 82.3776,
+          "init_time": "2026-05-14T00:00:00Z",
+          "valid_time": "2026-05-17T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-18": {
+          "forecast_f": 83.9678,
+          "init_time": "2026-05-15T00:00:00Z",
+          "valid_time": "2026-05-18T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-19": {
+          "forecast_f": 84.8978,
+          "init_time": "2026-05-16T00:00:00Z",
+          "valid_time": "2026-05-19T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-20": {
+          "forecast_f": 83.9024,
+          "init_time": "2026-05-17T00:00:00Z",
+          "valid_time": "2026-05-20T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-21": {
+          "forecast_f": 84.5074,
+          "init_time": "2026-05-18T00:00:00Z",
+          "valid_time": "2026-05-21T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-22": {
+          "forecast_f": 85.1324,
+          "init_time": "2026-05-19T00:00:00Z",
+          "valid_time": "2026-05-22T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-23": {
+          "forecast_f": 84.8147,
+          "init_time": "2026-05-20T00:00:00Z",
+          "valid_time": "2026-05-23T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-24": {
+          "forecast_f": 85.1206,
+          "init_time": "2026-05-21T00:00:00Z",
+          "valid_time": "2026-05-24T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-25": {
+          "forecast_f": 85.7953,
+          "init_time": "2026-05-22T00:00:00Z",
+          "valid_time": "2026-05-25T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-26": {
+          "forecast_f": 86.1981,
+          "init_time": "2026-05-23T00:00:00Z",
+          "valid_time": "2026-05-26T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-27": {
+          "forecast_f": 83.7364,
+          "init_time": "2026-05-24T00:00:00Z",
+          "valid_time": "2026-05-27T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-28": {
+          "forecast_f": 82.5861,
+          "init_time": "2026-05-25T00:00:00Z",
+          "valid_time": "2026-05-28T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-29": {
+          "forecast_f": 83.6344,
+          "init_time": "2026-05-26T00:00:00Z",
+          "valid_time": "2026-05-29T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-30": {
+          "forecast_f": 82.0206,
+          "init_time": "2026-05-27T00:00:00Z",
+          "valid_time": "2026-05-30T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-31": {
+          "forecast_f": 81.7846,
+          "init_time": "2026-05-28T00:00:00Z",
+          "valid_time": "2026-05-31T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-01": {
+          "forecast_f": 82.7468,
+          "init_time": "2026-05-29T00:00:00Z",
+          "valid_time": "2026-06-01T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-02": {
+          "forecast_f": 82.7524,
+          "init_time": "2026-05-30T00:00:00Z",
+          "valid_time": "2026-06-02T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-03": {
+          "forecast_f": 81.093,
+          "init_time": "2026-05-31T00:00:00Z",
+          "valid_time": "2026-06-03T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-04": {
+          "forecast_f": 82.0649,
+          "init_time": "2026-06-01T00:00:00Z",
+          "valid_time": "2026-06-04T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-05": {
+          "forecast_f": 82.7481,
+          "init_time": "2026-06-02T00:00:00Z",
+          "valid_time": "2026-06-05T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-06": {
+          "forecast_f": 84.6646,
+          "init_time": "2026-06-03T00:00:00Z",
+          "valid_time": "2026-06-06T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-07": {
+          "forecast_f": 84.0083,
+          "init_time": "2026-06-04T00:00:00Z",
+          "valid_time": "2026-06-07T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-08": {
+          "forecast_f": 86.2733,
+          "init_time": "2026-06-05T00:00:00Z",
+          "valid_time": "2026-06-08T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-09": {
+          "forecast_f": 83.4476,
+          "init_time": "2026-06-06T00:00:00Z",
+          "valid_time": "2026-06-09T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-10": {
+          "forecast_f": 85.0083,
+          "init_time": "2026-06-07T00:00:00Z",
+          "valid_time": "2026-06-10T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-11": {
+          "forecast_f": 83.3064,
+          "init_time": "2026-06-08T00:00:00Z",
+          "valid_time": "2026-06-11T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-12": {
+          "forecast_f": 83.9234,
+          "init_time": "2026-06-09T00:00:00Z",
+          "valid_time": "2026-06-12T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-13": {
+          "forecast_f": 84.9746,
+          "init_time": "2026-06-10T00:00:00Z",
+          "valid_time": "2026-06-13T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        }
+      }
+    },
+    "San Antonio, TX": {
+      "lat": 29.4241,
+      "lon": -98.4936,
+      "forecasts": {
+        "2026-05-15": {
+          "forecast_f": 83.0629,
+          "init_time": "2026-05-12T00:00:00Z",
+          "valid_time": "2026-05-15T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-16": {
+          "forecast_f": 82.4767,
+          "init_time": "2026-05-13T00:00:00Z",
+          "valid_time": "2026-05-16T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-17": {
+          "forecast_f": 85.0307,
+          "init_time": "2026-05-14T00:00:00Z",
+          "valid_time": "2026-05-17T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-18": {
+          "forecast_f": 85.9854,
+          "init_time": "2026-05-15T00:00:00Z",
+          "valid_time": "2026-05-18T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-19": {
+          "forecast_f": 85.2295,
+          "init_time": "2026-05-16T00:00:00Z",
+          "valid_time": "2026-05-19T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-20": {
+          "forecast_f": 79.3264,
+          "init_time": "2026-05-17T00:00:00Z",
+          "valid_time": "2026-05-20T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-21": {
+          "forecast_f": 78.2063,
+          "init_time": "2026-05-18T00:00:00Z",
+          "valid_time": "2026-05-21T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-22": {
+          "forecast_f": 81.5573,
+          "init_time": "2026-05-19T00:00:00Z",
+          "valid_time": "2026-05-22T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-23": {
+          "forecast_f": 78.9612,
+          "init_time": "2026-05-20T00:00:00Z",
+          "valid_time": "2026-05-23T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-24": {
+          "forecast_f": 81.1505,
+          "init_time": "2026-05-21T00:00:00Z",
+          "valid_time": "2026-05-24T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-25": {
+          "forecast_f": 83.7518,
+          "init_time": "2026-05-22T00:00:00Z",
+          "valid_time": "2026-05-25T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-26": {
+          "forecast_f": 83.3949,
+          "init_time": "2026-05-23T00:00:00Z",
+          "valid_time": "2026-05-26T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-27": {
+          "forecast_f": 77.7837,
+          "init_time": "2026-05-24T00:00:00Z",
+          "valid_time": "2026-05-27T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-28": {
+          "forecast_f": 84.0247,
+          "init_time": "2026-05-25T00:00:00Z",
+          "valid_time": "2026-05-28T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-29": {
+          "forecast_f": 86.3848,
+          "init_time": "2026-05-26T00:00:00Z",
+          "valid_time": "2026-05-29T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-30": {
+          "forecast_f": 84.7827,
+          "init_time": "2026-05-27T00:00:00Z",
+          "valid_time": "2026-05-30T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-31": {
+          "forecast_f": 85.3241,
+          "init_time": "2026-05-28T00:00:00Z",
+          "valid_time": "2026-05-31T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-01": {
+          "forecast_f": 86.477,
+          "init_time": "2026-05-29T00:00:00Z",
+          "valid_time": "2026-06-01T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-02": {
+          "forecast_f": 84.1088,
+          "init_time": "2026-05-30T00:00:00Z",
+          "valid_time": "2026-06-02T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-03": {
+          "forecast_f": 82.3597,
+          "init_time": "2026-05-31T00:00:00Z",
+          "valid_time": "2026-06-03T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-04": {
+          "forecast_f": 83.0952,
+          "init_time": "2026-06-01T00:00:00Z",
+          "valid_time": "2026-06-04T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-05": {
+          "forecast_f": 79.5083,
+          "init_time": "2026-06-02T00:00:00Z",
+          "valid_time": "2026-06-05T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-06": {
+          "forecast_f": 83.2017,
+          "init_time": "2026-06-03T00:00:00Z",
+          "valid_time": "2026-06-06T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-07": {
+          "forecast_f": 84.8727,
+          "init_time": "2026-06-04T00:00:00Z",
+          "valid_time": "2026-06-07T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-08": {
+          "forecast_f": 84.5593,
+          "init_time": "2026-06-05T00:00:00Z",
+          "valid_time": "2026-06-08T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-09": {
+          "forecast_f": 85.9774,
+          "init_time": "2026-06-06T00:00:00Z",
+          "valid_time": "2026-06-09T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-10": {
+          "forecast_f": 86.6012,
+          "init_time": "2026-06-07T00:00:00Z",
+          "valid_time": "2026-06-10T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-11": {
+          "forecast_f": 87.6101,
+          "init_time": "2026-06-08T00:00:00Z",
+          "valid_time": "2026-06-11T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-12": {
+          "forecast_f": 86.8252,
+          "init_time": "2026-06-09T00:00:00Z",
+          "valid_time": "2026-06-12T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-13": {
+          "forecast_f": 86.9866,
+          "init_time": "2026-06-10T00:00:00Z",
+          "valid_time": "2026-06-13T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        }
+      }
+    },
+    "Denver, CO": {
+      "lat": 39.7392,
+      "lon": -104.9903,
+      "forecasts": {
+        "2026-05-15": {
+          "forecast_f": 75.7916,
+          "init_time": "2026-05-12T00:00:00Z",
+          "valid_time": "2026-05-15T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-16": {
+          "forecast_f": 75.1165,
+          "init_time": "2026-05-13T00:00:00Z",
+          "valid_time": "2026-05-16T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-17": {
+          "forecast_f": 64.7135,
+          "init_time": "2026-05-14T00:00:00Z",
+          "valid_time": "2026-05-17T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-18": {
+          "forecast_f": 36.1135,
+          "init_time": "2026-05-15T00:00:00Z",
+          "valid_time": "2026-05-18T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-19": {
+          "forecast_f": 43.6387,
+          "init_time": "2026-05-16T00:00:00Z",
+          "valid_time": "2026-05-19T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-20": {
+          "forecast_f": 53.9788,
+          "init_time": "2026-05-17T00:00:00Z",
+          "valid_time": "2026-05-20T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-21": {
+          "forecast_f": 60.2604,
+          "init_time": "2026-05-18T00:00:00Z",
+          "valid_time": "2026-05-21T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-22": {
+          "forecast_f": 57.4522,
+          "init_time": "2026-05-19T00:00:00Z",
+          "valid_time": "2026-05-22T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-23": {
+          "forecast_f": 64.4213,
+          "init_time": "2026-05-20T00:00:00Z",
+          "valid_time": "2026-05-23T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-24": {
+          "forecast_f": 75.451,
+          "init_time": "2026-05-21T00:00:00Z",
+          "valid_time": "2026-05-24T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-25": {
+          "forecast_f": 76.7002,
+          "init_time": "2026-05-22T00:00:00Z",
+          "valid_time": "2026-05-25T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-26": {
+          "forecast_f": 73.1473,
+          "init_time": "2026-05-23T00:00:00Z",
+          "valid_time": "2026-05-26T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-27": {
+          "forecast_f": 69.7871,
+          "init_time": "2026-05-24T00:00:00Z",
+          "valid_time": "2026-05-27T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-28": {
+          "forecast_f": 71.5226,
+          "init_time": "2026-05-25T00:00:00Z",
+          "valid_time": "2026-05-28T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-29": {
+          "forecast_f": 70.7235,
+          "init_time": "2026-05-26T00:00:00Z",
+          "valid_time": "2026-05-29T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-30": {
+          "forecast_f": 68.7049,
+          "init_time": "2026-05-27T00:00:00Z",
+          "valid_time": "2026-05-30T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-31": {
+          "forecast_f": 73.7139,
+          "init_time": "2026-05-28T00:00:00Z",
+          "valid_time": "2026-05-31T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-01": {
+          "forecast_f": 73.6199,
+          "init_time": "2026-05-29T00:00:00Z",
+          "valid_time": "2026-06-01T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-02": {
+          "forecast_f": 74.2392,
+          "init_time": "2026-05-30T00:00:00Z",
+          "valid_time": "2026-06-02T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-03": {
+          "forecast_f": 74.0359,
+          "init_time": "2026-05-31T00:00:00Z",
+          "valid_time": "2026-06-03T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-04": {
+          "forecast_f": 80.9355,
+          "init_time": "2026-06-01T00:00:00Z",
+          "valid_time": "2026-06-04T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-05": {
+          "forecast_f": 77.4203,
+          "init_time": "2026-06-02T00:00:00Z",
+          "valid_time": "2026-06-05T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-06": {
+          "forecast_f": 87.045,
+          "init_time": "2026-06-03T00:00:00Z",
+          "valid_time": "2026-06-06T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-07": {
+          "forecast_f": 87.3757,
+          "init_time": "2026-06-04T00:00:00Z",
+          "valid_time": "2026-06-07T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-08": {
+          "forecast_f": 75.7348,
+          "init_time": "2026-06-05T00:00:00Z",
+          "valid_time": "2026-06-08T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-09": {
+          "forecast_f": 86.672,
+          "init_time": "2026-06-06T00:00:00Z",
+          "valid_time": "2026-06-09T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-10": {
+          "forecast_f": 80.3274,
+          "init_time": "2026-06-07T00:00:00Z",
+          "valid_time": "2026-06-10T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-11": {
+          "forecast_f": 70.6968,
+          "init_time": "2026-06-08T00:00:00Z",
+          "valid_time": "2026-06-11T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-12": {
+          "forecast_f": 77.995,
+          "init_time": "2026-06-09T00:00:00Z",
+          "valid_time": "2026-06-12T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-13": {
+          "forecast_f": 72.9906,
+          "init_time": "2026-06-10T00:00:00Z",
+          "valid_time": "2026-06-13T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        }
+      }
+    },
+    "Seattle, WA": {
+      "lat": 47.6062,
+      "lon": -122.3321,
+      "forecasts": {
+        "2026-05-15": {
+          "forecast_f": 52.6441,
+          "init_time": "2026-05-12T00:00:00Z",
+          "valid_time": "2026-05-15T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-16": {
+          "forecast_f": 52.2275,
+          "init_time": "2026-05-13T00:00:00Z",
+          "valid_time": "2026-05-16T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-17": {
+          "forecast_f": 52.0049,
+          "init_time": "2026-05-14T00:00:00Z",
+          "valid_time": "2026-05-17T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-18": {
+          "forecast_f": 57.7479,
+          "init_time": "2026-05-15T00:00:00Z",
+          "valid_time": "2026-05-18T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-19": {
+          "forecast_f": 57.46,
+          "init_time": "2026-05-16T00:00:00Z",
+          "valid_time": "2026-05-19T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-20": {
+          "forecast_f": 59.3107,
+          "init_time": "2026-05-17T00:00:00Z",
+          "valid_time": "2026-05-20T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-21": {
+          "forecast_f": 63.9348,
+          "init_time": "2026-05-18T00:00:00Z",
+          "valid_time": "2026-05-21T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-22": {
+          "forecast_f": 65.382,
+          "init_time": "2026-05-19T00:00:00Z",
+          "valid_time": "2026-05-22T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-23": {
+          "forecast_f": 62.1578,
+          "init_time": "2026-05-20T00:00:00Z",
+          "valid_time": "2026-05-23T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-24": {
+          "forecast_f": 60.5472,
+          "init_time": "2026-05-21T00:00:00Z",
+          "valid_time": "2026-05-24T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-25": {
+          "forecast_f": 56.1721,
+          "init_time": "2026-05-22T00:00:00Z",
+          "valid_time": "2026-05-25T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-26": {
+          "forecast_f": 55.0011,
+          "init_time": "2026-05-23T00:00:00Z",
+          "valid_time": "2026-05-26T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-27": {
+          "forecast_f": 60.0991,
+          "init_time": "2026-05-24T00:00:00Z",
+          "valid_time": "2026-05-27T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-28": {
+          "forecast_f": 65.6938,
+          "init_time": "2026-05-25T00:00:00Z",
+          "valid_time": "2026-05-28T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-29": {
+          "forecast_f": 54.4251,
+          "init_time": "2026-05-26T00:00:00Z",
+          "valid_time": "2026-05-29T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-30": {
+          "forecast_f": 53.8144,
+          "init_time": "2026-05-27T00:00:00Z",
+          "valid_time": "2026-05-30T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-31": {
+          "forecast_f": 57.6359,
+          "init_time": "2026-05-28T00:00:00Z",
+          "valid_time": "2026-05-31T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-01": {
+          "forecast_f": 62.7951,
+          "init_time": "2026-05-29T00:00:00Z",
+          "valid_time": "2026-06-01T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-02": {
+          "forecast_f": 71.7844,
+          "init_time": "2026-05-30T00:00:00Z",
+          "valid_time": "2026-06-02T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-03": {
+          "forecast_f": 63.3224,
+          "init_time": "2026-05-31T00:00:00Z",
+          "valid_time": "2026-06-03T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-04": {
+          "forecast_f": 59.1431,
+          "init_time": "2026-06-01T00:00:00Z",
+          "valid_time": "2026-06-04T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-05": {
+          "forecast_f": 56.3714,
+          "init_time": "2026-06-02T00:00:00Z",
+          "valid_time": "2026-06-05T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-06": {
+          "forecast_f": 52.968,
+          "init_time": "2026-06-03T00:00:00Z",
+          "valid_time": "2026-06-06T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-07": {
+          "forecast_f": 57.0687,
+          "init_time": "2026-06-04T00:00:00Z",
+          "valid_time": "2026-06-07T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-08": {
+          "forecast_f": 58.6692,
+          "init_time": "2026-06-05T00:00:00Z",
+          "valid_time": "2026-06-08T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-09": {
+          "forecast_f": 56.3074,
+          "init_time": "2026-06-06T00:00:00Z",
+          "valid_time": "2026-06-09T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-10": {
+          "forecast_f": 56.752,
+          "init_time": "2026-06-07T00:00:00Z",
+          "valid_time": "2026-06-10T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-11": {
+          "forecast_f": 62.7859,
+          "init_time": "2026-06-08T00:00:00Z",
+          "valid_time": "2026-06-11T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-12": {
+          "forecast_f": 65.5086,
+          "init_time": "2026-06-09T00:00:00Z",
+          "valid_time": "2026-06-12T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-13": {
+          "forecast_f": 69.2771,
+          "init_time": "2026-06-10T00:00:00Z",
+          "valid_time": "2026-06-13T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        }
+      }
+    },
+    "Detroit, MI": {
+      "lat": 42.3315509,
+      "lon": -83.0466403,
+      "forecasts": {
+        "2026-05-15": {
+          "forecast_f": 64.5388,
+          "init_time": "2026-05-12T00:00:00Z",
+          "valid_time": "2026-05-15T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-16": {
+          "forecast_f": 70.2965,
+          "init_time": "2026-05-13T00:00:00Z",
+          "valid_time": "2026-05-16T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-17": {
+          "forecast_f": 75.1874,
+          "init_time": "2026-05-14T00:00:00Z",
+          "valid_time": "2026-05-17T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-18": {
+          "forecast_f": 83.082,
+          "init_time": "2026-05-15T00:00:00Z",
+          "valid_time": "2026-05-18T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-19": {
+          "forecast_f": 81.4931,
+          "init_time": "2026-05-16T00:00:00Z",
+          "valid_time": "2026-05-19T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-20": {
+          "forecast_f": 61.0895,
+          "init_time": "2026-05-17T00:00:00Z",
+          "valid_time": "2026-05-20T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-21": {
+          "forecast_f": 58.9991,
+          "init_time": "2026-05-18T00:00:00Z",
+          "valid_time": "2026-05-21T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-22": {
+          "forecast_f": 61.0289,
+          "init_time": "2026-05-19T00:00:00Z",
+          "valid_time": "2026-05-22T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-23": {
+          "forecast_f": 57.9336,
+          "init_time": "2026-05-20T00:00:00Z",
+          "valid_time": "2026-05-23T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-24": {
+          "forecast_f": 64.9121,
+          "init_time": "2026-05-21T00:00:00Z",
+          "valid_time": "2026-05-24T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-25": {
+          "forecast_f": 73.0939,
+          "init_time": "2026-05-22T00:00:00Z",
+          "valid_time": "2026-05-25T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-26": {
+          "forecast_f": 76.5338,
+          "init_time": "2026-05-23T00:00:00Z",
+          "valid_time": "2026-05-26T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-27": {
+          "forecast_f": 80.5188,
+          "init_time": "2026-05-24T00:00:00Z",
+          "valid_time": "2026-05-27T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-28": {
+          "forecast_f": 69.5994,
+          "init_time": "2026-05-25T00:00:00Z",
+          "valid_time": "2026-05-28T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-29": {
+          "forecast_f": 74.2785,
+          "init_time": "2026-05-26T00:00:00Z",
+          "valid_time": "2026-05-29T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-30": {
+          "forecast_f": 65.4049,
+          "init_time": "2026-05-27T00:00:00Z",
+          "valid_time": "2026-05-30T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-05-31": {
+          "forecast_f": 69.673,
+          "init_time": "2026-05-28T00:00:00Z",
+          "valid_time": "2026-05-31T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-01": {
+          "forecast_f": 74.2535,
+          "init_time": "2026-05-29T00:00:00Z",
+          "valid_time": "2026-06-01T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-02": {
+          "forecast_f": 74.303,
+          "init_time": "2026-05-30T00:00:00Z",
+          "valid_time": "2026-06-02T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-03": {
+          "forecast_f": 76.5813,
+          "init_time": "2026-05-31T00:00:00Z",
+          "valid_time": "2026-06-03T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-04": {
+          "forecast_f": 81.6185,
+          "init_time": "2026-06-01T00:00:00Z",
+          "valid_time": "2026-06-04T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-05": {
+          "forecast_f": 83.4269,
+          "init_time": "2026-06-02T00:00:00Z",
+          "valid_time": "2026-06-05T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-06": {
+          "forecast_f": 81.1635,
+          "init_time": "2026-06-03T00:00:00Z",
+          "valid_time": "2026-06-06T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-07": {
+          "forecast_f": 77.4954,
+          "init_time": "2026-06-04T00:00:00Z",
+          "valid_time": "2026-06-07T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-08": {
+          "forecast_f": 78.6771,
+          "init_time": "2026-06-05T00:00:00Z",
+          "valid_time": "2026-06-08T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-09": {
+          "forecast_f": 80.2006,
+          "init_time": "2026-06-06T00:00:00Z",
+          "valid_time": "2026-06-09T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-10": {
+          "forecast_f": 83.8392,
+          "init_time": "2026-06-07T00:00:00Z",
+          "valid_time": "2026-06-10T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-11": {
+          "forecast_f": 84.9043,
+          "init_time": "2026-06-08T00:00:00Z",
+          "valid_time": "2026-06-11T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-12": {
+          "forecast_f": 78.9668,
+          "init_time": "2026-06-09T00:00:00Z",
+          "valid_time": "2026-06-12T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        },
+        "2026-06-13": {
+          "forecast_f": 82.5738,
+          "init_time": "2026-06-10T00:00:00Z",
+          "valid_time": "2026-06-13T18:00:00Z",
+          "forecast_hours": 90,
+          "member_count": 64
+        }
+      }
+    }
+  }
+}

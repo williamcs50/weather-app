@@ -20,11 +20,11 @@ Bands: N/A
 
 ## What's open (carrying forward)
 
-- Add formal pre-registration for +3 day maximum temperature.
+- Formal pre-registration for +3 day maximum temperature is to be added.
 
-- Implement corrected verification using the Historical Forecast API for AIFS.
+- Corrected verification using the Historical Forecast API for AIFS is to be implemented.
 
-- Update the scoreboard.
+- The scoreboard is to be updated.
 
 
 ## Result against prediction
@@ -79,7 +79,7 @@ All results stand as measured. No re-runs.
 
 ## What's next
 
-- Phase 2: real forecast uncertainty. Confidence bands and decay driven by real ensemble spread. Prototype caveat removed.
+- Phase 2 covers real forecast uncertainty. Confidence bands and decay are to be driven by real ensemble spread. The prototype caveat is to be removed.
 
 ## Anything surprising or worth flagging
 
@@ -87,6 +87,12 @@ All results stand as measured. No re-runs.
 
 
 # Wednesday, June 10th: Phase 2 complete
+
+## Pre-registration
+
+Prediction: N/A (pipeline not run today)
+
+Bands: N/A
 
 ## What landed today
 
@@ -108,9 +114,13 @@ All results stand as measured. No re-runs.
 
 - Nothing carrying forward from Phase 2.
 
+## Result against prediction
+
+- N/A (pipeline not run today)
+
 ## What's next
 
-- v3: WeatherNext (GenCast) to be added as a third comparison panel. Access granted; deferred pending gridded-data integration and licensing review (see Issue #6).
+- WeatherNext (GenCast, v3) is to be added as a third comparison panel. Access is granted; integration is deferred pending gridded-data and licensing review (see Issue #6).
 
 
 ## Anything surprising or worth flagging
@@ -119,6 +129,12 @@ All results stand as measured. No re-runs.
 
 
 # Thursday, June 11th: Close-out
+
+## Pre-registration
+
+Prediction: N/A (pipeline not run today)
+
+Bands: N/A
 
 ## What landed today
 
@@ -146,6 +162,10 @@ All results stand as measured. No re-runs.
 
 - Nothing. The scoreboard runs for any US city. The four hand-checked cities establish pipeline trust, not the full scope. Broadening to more cities, lead times, or metrics is future work.
 
+## Result against prediction
+
+- N/A (pipeline not run today)
+
 ## What's next
 
 - WeatherNext: separate project with its own charter. The real blockers are integrating gridded model data into a point-forecast pipeline and navigating the real-time data licensing constraint. API access is already in hand.
@@ -154,6 +174,12 @@ All results stand as measured. No re-runs.
 
 
 # Thursday, June 11th (afternoon): WeatherNext Phase A kickoff
+
+## Pre-registration
+
+Prediction: N/A (pipeline not run today)
+
+Bands: N/A
 
 ## Charter
 
@@ -171,6 +197,10 @@ All results stand as measured. No re-runs.
 
 - Access unconfirmed. Allowlist confirmation received by email but no query has been run against the actual dataset.
 
+## Result against prediction
+
+- N/A (pipeline not run today)
+
 ## What's next
 
 - BigQuery access is to be confirmed against the actual dataset.
@@ -179,6 +209,12 @@ All results stand as measured. No re-runs.
 
 
 # Friday, June 12th: WeatherNext Phase A continued
+
+## Pre-registration
+
+Prediction: N/A (pipeline not run today)
+
+Bands: N/A
 
 ## What landed today
 
@@ -212,6 +248,10 @@ All results stand as measured. No re-runs.
 
 - Twelve points across six cities is sufficient to trust the pipeline but not large enough to draw conclusions about model-level bias or ranking.
 
+## Result against prediction
+
+- N/A (pipeline not run today)
+
 ## What's next
 
 - Graceful handling for ASOS observation gaps is to be added to the pipeline.
@@ -229,3 +269,207 @@ All results stand as measured. No re-runs.
 - Denver winter produced the largest single error in the set at 10.5°F cold despite the ensemble capturing a warm scenario in some members. Wide spread did not protect against a large mean error.
 
 - San Antonio showed the largest seasonal directional flip in the set: warm-biased in winter and cold-biased in summer. No other city reversed direction by this margin across seasons.
+
+
+# Monday, June 15th: Phase B scoreboard migration
+
+## Pre-registration
+
+Prediction: N/A (pipeline not run today)
+
+Bands: N/A
+
+## What landed today
+
+- Committed the Phase B charter amendment, dated June 15. The non-goal blocking GFS and AIFS re-runs under the daily-maximum metric was retired. This cleared the path to running both models under the new 18 UTC metric without protocol conflict.
+
+- Migrated the GFS and AIFS scoreboard from daily-maximum temperature to instantaneous 2m temperature at 18:00 UTC. The Previous Runs API now uses timezone=UTC, and the parser filters for the T18:00 row instead of taking a daily maximum. The ASOS source switched from the daily.py endpoint to the asos.py hourly endpoint, selecting the observation closest to 18:00 UTC within a 90-minute window. Station selection was corrected to filter for ASOS provider, which fixed a silent bug where non-ASOS stations were being returned as the nearest match.
+
+- Updated the scoreboard label to describe the new metric precisely: each model's temperature forecast at 18:00 UTC, verified against the nearest airport weather station reading at that hour, not a daily high. Added a note below the scoreboard cards stating that scores before June 15 used a different metric and are not directly comparable to scores from that date forward.
+
+- Hand-checked the migrated pipeline against Belleair, FL on May 20, 2026. GFS returned 86.90°F and AIFS returned 86.54°F, both against an ASOS observation of 89°F at 17:53 UTC. GFS reproduced the migration session value exactly: a fresh pull today through the full pipeline returned 86.90°F. AIFS was independently verified for the first time under the new metric via a separate Python call; it matched the pipeline output exactly.
+
+- Updated scratch_forecast_check.py to match the new metric: asos.py hourly endpoint, T18:00 filter on the Previous Runs API, and the ASOS provider fix for station selection. The script now takes any US city and date range and produces a GFS and AIFS comparison table in one run.
+
+- Explored a BigQuery OAuth approach to add WeatherNext to the live scoreboard as a third column. The implementation was built and tested: OAuth sign-in worked, the BigQuery REST API was reached, and the query structure was correct. The project hit its free query bytes quota and returned a 403 error. The implementation was reverted. WeatherNext shows as a placeholder in the scoreboard.
+
+- Committed the migration and scratch script update to the phase-b-scoreboard branch.
+
+## What's open (carrying forward)
+
+- WeatherNext is not on the live scoreboard. The architecture is unsolved. The BigQuery quota blocks the REST API approach from the browser without billing enabled.
+
+- The WeatherNext scoreboard card currently reads "v3 · no data yet" with no explanation of why there is no data. A reader cannot distinguish a build state from an excluded model or a failure. The label needs to say something closer to "integration pending" to prevent the wrong reading.
+
+- Pre-registration for the Phase B aggregate prediction was not written. This must be done before the pipeline is run across multiple cities.
+
+- The full pipeline has not been run. No aggregate scores exist yet under the new metric.
+
+## Result against prediction
+
+- N/A (pipeline not run today)
+
+## What's next
+
+- Write the pre-registration before running the pipeline on any additional cities.
+
+- Run the scratch script across multiple cities to build up a hand-checked dataset under the new metric.
+
+- Decide on the WeatherNext architecture. The most realistic path is pre-computed JSON updated on a schedule, which avoids live BigQuery calls entirely.
+
+## Anything surprising or worth flagging
+
+- AIFS had not been independently hand-checked under the new metric before today. The Phase 1 hand-check covered AIFS under the daily-maximum metric only. The migration session recorded only the GFS value for May 20. The AIFS verification was a new check, not a reproduction of prior work. Both values came back clean.
+
+- The BigQuery OAuth approach worked technically. Authentication, token exchange, and the query structure all functioned correctly. The failure was quota, not code. The same approach could be revived if billing is enabled or if the monthly quota resets and query costs are kept small.
+
+
+# Tuesday, June 16th: Phase B WeatherNext integration
+
+## Pre-registration
+
+Prediction: All three models (GFS, AIFS, and WeatherNext) will fall in the 3 to 7°F MAE range. Ranking: AIFS wins, GFS second, and WeatherNext third.
+
+Bands: Below 2°F for any model is suspiciously good, check the pipeline. Above 10°F for any model is suspiciously bad, check the pipeline. If WeatherNext beats GFS or AIFS in the aggregate, verify before accepting.
+
+Note: Belleair, FL was run as a pipeline verification before this prediction was written: GFS 3.6°F, AIFS 3.7°F, WeatherNext 5.1°F. The remaining five cities are unseen.
+
+
+## What landed today
+
+- `scripts/fetch_weathernext.py` created and run across six cities.
+
+- `data/weathernext_scores.json` populated: 30-day window, 6 cities, 64 members, 90 forecast hours per entry.
+
+- WeatherNext added to the accuracy scoreboard in `weather.js` reading from static JSON.
+
+- `scratch_forecast_check.py` updated to include WeatherNext column for spot-checks.
+
+- Pre-registration committed before pipeline run.
+
+- Six-city results recorded and verified against prediction.
+
+- `--city` flag added to `fetch_weathernext.py` so any US city can be pre-computed on demand, not just the original six.
+
+- Quota error handling added: catches API errors per date, logs clearly, and writes partial results via a `finally` block so nothing is lost silently.
+
+- `requirements.txt` created with `google-cloud-bigquery`.
+
+- App title updated to "Weather Forecast + Model Comparison".
+
+- README updated to reflect current state: WeatherNext on scoreboard, 18 UTC metric documented, Phase B marked complete.
+
+- WeatherNext confidence panel badge changed from "PENDING" to "HISTORIC ONLY" with a note that forward forecasts are not available under current licensing terms.
+
+- Timestamp query parameter added to the `weathernext_scores.json` fetch so the browser always pulls the latest file instead of a cached version.
+
+
+## What's open (carrying forward)
+
+- WeatherNext data requires a manual `--city` run for any city outside the original six. There is no automatic fallback in the browser for unseen cities.
+
+- Eleven of the twelve Phase A hand-check points have not been run against the batch pipeline output. Only one spot-check was completed before the pre-registration. This is unfinished verification, not optional follow-up.
+
+- San Antonio AIFS at 1.8°F was verified at the pipeline-logic level only. The stronger form of verification, going back to the raw Open-Meteo value and the raw ASOS observation and recomputing the absolute difference by hand, has not been done.
+
+- All-three-coverage has not been formally confirmed on the aggregate sample. The 29-day overlap was observed in practice but not verified by inspecting every city-date for a non-null score from all three models.
+
+## Result against prediction
+
+City-level results (29 days each, warm-season window May 14 to June 12):
+
+| City | GFS | AIFS | WeatherNext |
+|---|---|---|---|
+| Belleair, FL | 3.6°F | 3.7°F | 5.1°F |
+| Chicago, IL | 5.8°F | 3.0°F | 3.9°F |
+| San Diego, CA | 2.3°F | 2.7°F | 2.8°F |
+| San Antonio, TX | 3.3°F | 1.8°F | 2.1°F |
+| Denver, CO | 5.5°F | 3.1°F | 2.7°F |
+| Seattle, WA | 3.4°F | 2.3°F | 2.3°F |
+| Six-city average | 3.98°F | 2.77°F | 3.15°F |
+
+Prediction was all three models in the 3 to 7°F range, ranking AIFS first, GFS second, WeatherNext third. The range prediction held for most results but San Antonio AIFS came in at 1.8°F (below the 2°F band floor) and San Diego GFS came in at 2.3°F (just above it). The ranking prediction was partially correct: AIFS won as predicted. WeatherNext finished second and GFS finished third, the opposite of the predicted order for those two models.
+
+Two band flags were triggered and investigated. San Antonio AIFS at 1.8°F is below the 2°F threshold. A hand-check on May 20 showed AIFS at -1.64°F off for San Antonio, a genuinely close forecast. The low aggregate appears to be a real result, not a pipeline artifact. WeatherNext beating GFS in the aggregate triggered the pre-registration verification flag. A hand-check on May 20 across all six cities showed the pattern is consistent with individual dates: WeatherNext was close in Denver and San Antonio on that date, GFS had large misses in both. The result stands.
+
+These results reflect a warm-season window only. A longer or cross-season sample may look different.
+
+## What's next
+
+- Complete the three open verification steps before anything else: eleven-point pipeline calibration, San Antonio raw-measurement confirmation, and all-three-coverage check on the aggregate sample. Close-out does not begin until all three pass.
+
+- Add attribution and experimental-use disclaimer to the page for WeatherNext
+
+- Update README and roadmap to mark Phase C in progress
+
+- Write the Phase B retrospective
+
+## Anything surprising or worth flagging
+
+- WeatherNext finished second in the six-city aggregate, beating GFS, which was the opposite of the predicted ranking for those two models. The pre-registration said to verify before accepting. The hand-check confirmed it is a real result.
+
+- San Antonio AIFS came in at 1.8°F, below the 2°F surprise threshold. Also verified clean.
+
+- Denver drove the GFS/WeatherNext ranking swap. GFS at 5.5°F is the worst single-city score in the table. WeatherNext at 2.7°F is the best. Complex terrain at the base of the Rockies produces genuine forecast difficulty and GFS appears most affected by it in this sample.
+
+- Belleair carries 17% of the WeatherNext six-city average and is WeatherNext's worst result at 5.1°F. Without Belleair, WeatherNext's average drops to approximately 2.76°F, essentially tied with AIFS. The six-city aggregate is sensitive to this one result and the small sample size should be kept in mind when reading the ranking.
+
+# Wednesday, June 17th: Phase B verification close-out and Mesonet bug fix
+
+## What landed today
+
+- Completed all three Phase B verification tasks: eleven-point pipeline calibration, San Antonio raw-measurement confirmation, and all-three-coverage check. All three passed.
+
+- Found and fixed a methodology bug: Iowa Mesonet's `asos.py` endpoint treats the end date as exclusive on multi-day requests. The pipeline was requesting `day2=12` when the intended last date was June 12, silently dropping that date for every city. Fixed in `weather.js` and `scripts/coverage_check.py` by adding one day to the end date before constructing the Mesonet URL. This is a methodology bug under the charter, not result-chasing. The correct window is 30 days and the pipeline was silently computing 29.
+
+- Recomputed the six-city aggregate on the corrected 30-day window using `scripts/recompute_mae.py`, which queries BigQuery directly for WeatherNext so results are independent of the rolling JSON window.
+
+- Found that the Open-Meteo AIFS archive silently revised values for Chicago between June 15 and June 17. The original scoreboard recorded Chicago AIFS at 3.0°F; fresh data shows 4.5°F. GFS for Chicago is unchanged across the same dates. This means the old 29-day AIFS aggregate (2.77°F) cannot be exactly reproduced from a fresh query today. Documented in README as a known upstream data fidelity limitation.
+
+- Documented `scratch_forecast_check.py --lat/--lon` flags so hand-checks use stored coordinates and avoid coordinate divergence.
+
+## Amendment: corrected 30-day results (May 14 to June 12)
+
+Recomputed using `scripts/recompute_mae.py` with BigQuery for WeatherNext. Old column reflects the buggy 29-day window (June 12 dropped). New column is the corrected 30-day window.
+
+| City | GFS (29d) | AIFS (29d) | WN (29d) | GFS (30d) | AIFS (30d) | WN (30d) |
+|---|---|---|---|---|---|---|
+| Belleair, FL | 3.6°F | 3.7°F | 5.1°F | 3.5°F | 3.6°F | 4.9°F |
+| Chicago, IL | 6.0°F | 4.5°F | 3.9°F | 5.8°F | 4.5°F | 3.8°F |
+| San Diego, CA | 2.3°F | 2.8°F | 2.8°F | 2.3°F | 2.8°F | 3.0°F |
+| San Antonio, TX | 3.3°F | 1.8°F | 2.1°F | 3.2°F | 1.7°F | 2.1°F |
+| Denver, CO | 5.5°F | 3.1°F | 2.7°F | 5.4°F | 3.1°F | 2.7°F |
+| Seattle, WA | 3.3°F | 2.4°F | 2.3°F | 3.3°F | 2.4°F | 2.3°F |
+| Six-city avg | 4.00°F | 3.05°F | 3.15°F | 3.92°F | 3.02°F | 3.13°F |
+
+Rankings are unchanged across both windows: AIFS first, WeatherNext second, GFS third. The shifts from adding June 12 are small and directionally consistent with a legitimate bug fix rather than result-chasing.
+
+Note: the old 29-day AIFS aggregate above (3.05°F) differs from the 2.77°F recorded on June 16 due to the Open-Meteo AIFS archive revision for Chicago. The June 16 number was correct at time of recording. The 3.05°F is what the archive returns today on the same dates.
+
+---
+
+# Wednesday, June 17th: Phase C compliance and close-out
+
+## Pre-registration
+
+No new prediction. Phase C is compliance and documentation only.
+
+## What landed today
+
+- 
+
+## What's open (carrying forward)
+
+- 
+
+## Result against prediction
+
+N/A
+
+## What's next
+
+- 
+
+## Anything surprising or worth flagging
+
+- 

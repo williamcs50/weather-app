@@ -209,6 +209,15 @@ function parseEnsemblePeriods(data) {
     .slice(0, 8);
 }
 
+function findClosestCity(cities, lat, lon, threshold) {
+  let best = null, bestDist = Infinity;
+  for (const [, city] of Object.entries(cities)) {
+    const dist = Math.sqrt((city.lat - lat) ** 2 + (city.lon - lon) ** 2);
+    if (dist < bestDist) { bestDist = dist; best = city; }
+  }
+  return bestDist <= threshold ? best : null;
+}
+
 async function fetchHistoricalAccuracy(lat, lon, stationsUrl, stateCode) {
   // Measure real forecast skill: forecasts as issued at +3-day lead on daily max °F,
   // verified against Iowa Mesonet ASOS observations. Both models through identical pipeline.
@@ -223,18 +232,23 @@ async function fetchHistoricalAccuracy(lat, lon, stationsUrl, stateCode) {
   const stRes = await fetch(stationsUrl, { headers: { 'User-Agent': 'nws-weather-app/1.0' } });
   if (!stRes.ok) return null;
   const stData  = await stRes.json();
-  const stationK = stData.features?.[0]?.properties?.stationIdentifier;
+  const asosFeat = stData.features?.find(f => f.properties?.provider?.startsWith('ASOS'));
+  const stationK = asosFeat?.properties?.stationIdentifier;
   if (!stationK) return null;
   const station = stationK.replace(/^K/, '');  // "KORD" → "ORD"
 
-  // Iowa Mesonet: ASOS daily high (°F, already converted)
+  // Iowa Mesonet: ASOS hourly observations in UTC.
+  // We pick the single reading closest to 18:00 UTC per date.
   const [y1, m1, d1] = startStr.split('-');
-  const [y2, m2, d2] = endStr.split('-');
-  const mesonetUrl = `https://mesonet.agron.iastate.edu/cgi-bin/request/daily.py`
-    + `?network=${stateCode}_ASOS&stations=${station}`
+  // Mesonet treats the end date as exclusive on multi-day requests, so add one day
+  // to ensure the final day of the window is included.
+  const mesonetEnd = new Date(end); mesonetEnd.setDate(mesonetEnd.getDate() + 1);
+  const [y2, m2, d2] = fmt(mesonetEnd).split('-');
+  const mesonetUrl = `https://mesonet.agron.iastate.edu/cgi-bin/request/asos.py`
+    + `?station=${station}&data=tmpf`
     + `&year1=${y1}&month1=${m1}&day1=${d1}`
     + `&year2=${y2}&month2=${m2}&day2=${d2}`
-    + `&vars[]=max_tmpf&what=view&delim=comma`;
+    + `&tz=UTC&format=comma&latlon=no&missing=M&trace=T`;
 
   // Open-Meteo Previous Runs API: temperature_2m_previous_day3 is the hourly
   // temperature from the model run issued exactly 3 days before the valid time.
@@ -243,52 +257,79 @@ async function fetchHistoricalAccuracy(lat, lon, stationsUrl, stateCode) {
   const prevBase = `https://previous-runs-api.open-meteo.com/v1/forecast`
     + `?latitude=${lat.toFixed(4)}&longitude=${lon.toFixed(4)}`
     + `&start_date=${startStr}&end_date=${endStr}`
-    + `&hourly=temperature_2m_previous_day3&timezone=auto`;
+    + `&hourly=temperature_2m_previous_day3&timezone=UTC`;
 
-  const [mesonetRes, gfsRes, aifsRes] = await Promise.all([
+  const [mesonetRes, gfsRes, aifsRes, wnRes] = await Promise.all([
     fetch(mesonetUrl),
     fetch(`${prevBase}&models=gfs_seamless`),
     fetch(`${prevBase}&models=ecmwf_aifs025_single`),
+    fetch(`data/weathernext_scores.json?t=${Date.now()}`).catch(() => null),
   ]);
 
   if (!mesonetRes.ok) return null;
 
-  // Parse Mesonet CSV: columns are station, date (YYYY-MM-DD), max_tmpf
-  const obsMap = {};
-  (await mesonetRes.text()).trim().split('\n').slice(1).forEach(line => {
-    const cols = line.split(',');
-    if (cols.length >= 3 && cols[2] !== '' && cols[2] !== 'M') {
-      obsMap[cols[1].trim()] = parseFloat(cols[2]);
+  const asosText = await mesonetRes.text();
+
+  // Parse ASOS hourly CSV. Lines starting with '#' are comments; skip the
+  // header row ('station,valid,tmpf'). For each date keep the single observation
+  // closest to 18:00 UTC within a 90-minute window. Dates with no observation
+  // in that window are simply absent from obsMap and excluded from scoring.
+  const obsMap   = {};
+  const bestMins = {};
+  const WINDOW   = 90;
+  asosText.split('\n').forEach(line => {
+    const l = line.trim();
+    if (!l || l.startsWith('#') || l.startsWith('station,')) return;
+    const cols = l.split(',');
+    if (cols.length < 3) return;
+    const ts   = cols[1].trim();   // "2024-01-15 18:51"
+    const tmpf = cols[2].trim();
+    if (!tmpf || tmpf === 'M' || tmpf === 'T') return;
+
+    const date       = ts.slice(0, 10);
+    const hh         = parseInt(ts.slice(11, 13), 10);
+    const mm         = parseInt(ts.slice(14, 16), 10);
+    const minsFrom18 = Math.abs(hh * 60 + mm - 18 * 60);
+    if (minsFrom18 > WINDOW) return;
+
+    if (bestMins[date] == null || minsFrom18 < bestMins[date]) {
+      obsMap[date]   = parseFloat(tmpf);
+      bestMins[date] = minsFrom18;
     }
   });
 
-  // Derive daily max °F from hourly Previous Runs data
-  function parseDailyMaxF(json) {
+  // Extract the +3-day-lead forecast valid at exactly 18:00 UTC per date.
+  // With timezone=UTC, time strings are "YYYY-MM-DDTHH:00"; T18:00 is unambiguous.
+  function parse18UtcF(json) {
     const map   = {};
     const times = json?.hourly?.time ?? [];
     const temps = json?.hourly?.temperature_2m_previous_day3 ?? [];
     times.forEach((t, i) => {
-      const day = t.slice(0, 10);
-      const c   = temps[i];
-      if (c != null) {
-        const f = c * 9 / 5 + 32;
-        if (map[day] == null || f > map[day]) map[day] = f;
+      if (t.endsWith('T18:00')) {
+        const c = temps[i];
+        if (c != null) map[t.slice(0, 10)] = c * 9 / 5 + 32;
       }
     });
     return map;
   }
 
-  const [gfsJson, aifsJson] = await Promise.all([
+  const [gfsJson, aifsJson, wnData] = await Promise.all([
     gfsRes.ok  ? gfsRes.json()  : Promise.resolve(null),
     aifsRes.ok ? aifsRes.json() : Promise.resolve(null),
+    wnRes && wnRes.ok ? wnRes.json().catch(() => null) : Promise.resolve(null),
   ]);
 
-  const gfsMap  = parseDailyMaxF(gfsJson);
-  const aifsMap = parseDailyMaxF(aifsJson);
+  const gfsMap  = parse18UtcF(gfsJson);
+  const aifsMap = parse18UtcF(aifsJson);
+
+  // WeatherNext: match city by lat/lon proximity (0.5° threshold covers same metro area)
+  const wnCity = wnData ? findClosestCity(wnData.cities ?? {}, lat, lon, 0.5) : null;
+  const wnMap  = wnCity ? wnCity.forecasts ?? {} : null;
 
   // MAE: only dates where both observation and forecast are present — no interpolation
   let gfsAbsErr = 0, gfsDays = 0;
   let aifsAbsErr = 0, aifsDays = 0;
+  let wnAbsErr = 0,  wnDays = 0;
 
   Object.keys(obsMap).forEach(date => {
     const obs = obsMap[date];
@@ -298,13 +339,19 @@ async function fetchHistoricalAccuracy(lat, lon, stationsUrl, stateCode) {
 
     const aifsPred = aifsMap[date];
     if (aifsPred != null) { aifsAbsErr += Math.abs(obs - aifsPred); aifsDays++; }
+
+    const wnEntry = wnMap ? wnMap[date] : null;
+    if (wnEntry != null) { wnAbsErr += Math.abs(obs - wnEntry.forecast_f); wnDays++; }
   });
 
   return {
     gfsMae:   gfsDays  > 0 ? Math.round(gfsAbsErr  / gfsDays  * 10) / 10 : null,
     aifsMae:  aifsDays > 0 ? Math.round(aifsAbsErr / aifsDays * 10) / 10 : null,
+    wnMae:    wnDays   > 0 ? Math.round(wnAbsErr   / wnDays   * 10) / 10 : null,
     gfsDays,
     aifsDays,
+    wnDays,
+    wnCityFound: wnMap !== null,
   };
 }
 
@@ -385,9 +432,9 @@ function renderForecast(nwsPeriods, aifsPeriods, city, state, ensembleData) {
     <section class="feature-section">
       <div class="section-header-row">
         <div class="section-title">Model accuracy scoreboard</div>
-        <div class="section-meta">3 days ahead · daily high temperature · average error in °F</div>
+        <div class="section-meta">3 days ahead · temperature at 18 UTC · average error in °F · lower is better</div>
       </div>
-      <div class="section-subtitle">Forecasts as issued 3 days ahead, verified against airport weather station readings</div>
+      <div class="section-subtitle">Each model's temperature forecast at 18:00 UTC, roughly midday to early afternoon across the contiguous US, verified against the nearest airport weather station reading at that hour. Not a daily high.</div>
       <div class="scoreboard-cards" id="scoreboard-cards">
         <div class="score-loading">Loading historical data…</div>
       </div>
@@ -496,10 +543,10 @@ function renderConfidenceCards(nwsPeriods, aifsPeriods, ensembleData) {
     <div class="conf-card conf-dm">
       <div class="conf-hdr">
         <span class="conf-src">DeepMind <span class="conf-sub">machine learning (v3)</span></span>
-        <span class="conf-badge badge-pending">PENDING</span>
+        <span class="conf-badge badge-pending">HISTORIC ONLY</span>
       </div>
       <div class="conf-temp conf-pending-val">—</div>
-      <div class="conf-range">access granted · integration pending</div>
+      <div class="conf-range">historic data only · forward forecasts not available under current license</div>
     </div>
   `;
 }
@@ -570,7 +617,7 @@ function renderDecayChart(nwsPeriods, aifsPeriods, ensembleData) {
     </div>
     <div class="decay-card decay-card-dm">
       <div class="decay-model model-dm">DeepMind</div>
-      <div class="decay-label">v3 pending</div>
+      <div class="decay-label">historic data only</div>
     </div>
   `;
 }
@@ -639,13 +686,14 @@ function renderScoreboard(accuracy) {
       <div class="score-pct">${accuracy.aifsMae != null ? accuracy.aifsMae + '°F' : '—'}</div>
       <div class="score-label">average error · ${accuracy.aifsDays} days</div>
     </div>
-    <div class="score-card score-card-dm">
-      <div class="score-src model-dm">DeepMind</div>
-      <div class="score-pct score-pct-dm">—</div>
-      <div class="score-label">v3 · no data yet</div>
+    <div class="score-card score-card-dm${accuracy.wnCityFound && accuracy.wnDays > 0 ? '' : ' pending'}">
+      <div class="score-src model-dm">WeatherNext <span class="score-sub">(GenCast v3)</span></div>
+      <div class="score-pct${accuracy.wnCityFound && accuracy.wnDays > 0 ? '' : ' score-pct-dm'}">${accuracy.wnMae != null ? accuracy.wnMae + '°F' : '—'}</div>
+      <div class="score-label">${accuracy.wnCityFound ? (accuracy.wnDays > 0 ? `average error · ${accuracy.wnDays} days` : 'no overlapping dates') : 'no pre-computed data for this city'}</div>
     </div>
     <p class="scoreboard-note">30-day window ending 4 days ago. One airport station per city. Early sample, not a long-term baseline.</p>
-    <p class="scoreboard-note">The scoring method changed on June 10. Earlier scores used a single forecast run per model; later scores average across all ensemble members. Numbers from before and after that date are not directly comparable.</p>
+    <p class="scoreboard-note">Metric changed June 15, 2026: replaced daily-maximum temperature with instantaneous 2m temperature at 18:00 UTC. Scores from before that date used a different metric and are not comparable to these numbers.</p>
+    <p class="scoreboard-note">WeatherNext is an experimental model, not approved for operational or safety-critical use. Scores are for research and comparison purposes only.</p>
   `;
 }
 
