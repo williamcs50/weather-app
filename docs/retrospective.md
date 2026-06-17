@@ -36,3 +36,47 @@ Completed June 2026. Three-day project to make the weather app's model compariso
 - Starting with a longer sample window would have reduced sensitivity to individual events. Thirty days is defensible as a pilot but the Chicago result was heavily influenced by a single frontal event across two consecutive days.
 
 - Diagnosing the `past_days` flaw earlier was possible with a code review of data source assumptions before the scoreboard went live.
+
+
+---
+
+# Project Retrospective: Phase B and C (WeatherNext Third Lineage and Compliance)
+
+Completed June 17, 2026. Added Google DeepMind WeatherNext (GenCast v3) as a third lineage on the accuracy scoreboard, measured on the same metric as GFS and AIFS, with attribution and compliance.
+
+
+## What worked
+
+- The charter re-run rule held the line. When the Chicago AIFS number changed between June 15 and June 17 due to an upstream archive revision, the rule gave a clear framework: document it as a caveat, do not re-run to chase a cleaner number. The project closed with an honest finding rather than a revised result.
+
+- Pre-registration before the aggregate run kept the results honest. The six-city numbers were genuinely unseen when the prediction was committed. When WeatherNext beat GFS (the opposite of the predicted ranking), the pre-registration made it clear this was a real finding that needed verification, not a result to quietly accept.
+
+- Staged verification caught a real bug. The all-three-coverage check found that the Mesonet exclusive end-date was silently dropping June 12 from every city. Without the verification step, the pipeline would have shipped with 29 days mislabeled as 30 across all six cities.
+
+- The charter amendment process for retiring the daily-maximum non-goal was the right call. Running two parallel scoreboards (daily-high for GFS and AIFS, 18 UTC for WeatherNext) would have produced numbers a reader would conflate. The single 18 UTC metric made the comparison honest and readable.
+
+- Pre-computing WeatherNext to a static JSON solved the browser quota problem cleanly. The BigQuery REST API from the browser hit quota limits and was reverted. Shifting the computation offline and serving a JSON file eliminated the dependency entirely and made the page load fast.
+
+- The 0.5 degree proximity threshold for matching searched cities to the pre-computed JSON worked without any manual configuration. Detroit covered Birmingham without any code change.
+
+
+## What surprised you
+
+- The Open-Meteo AIFS archive silently revised historical values between June 15 and June 17. Chicago AIFS went from 3.0°F to 4.5°F on the same dates with no changelog. GFS values were unchanged. This means AIFS scores are not reproducible on a future date, which undermines the "forecasts as issued" guarantee. It was not anticipated that the upstream archive would behave this way.
+
+- WeatherNext finished second in the six-city aggregate, beating GFS. The pre-registration predicted GFS second and WeatherNext third. Denver was the primary driver: GFS posted 5.4°F there while WeatherNext posted 2.7°F. Complex terrain at the base of the Rockies appears to be a genuine weakness for GFS in this sample.
+
+- The Mesonet exclusive end-date bug produced no error. The API returned clean data for all other dates, and the pipeline reported a plausible 29-day result with no warning. Silent data truncation is harder to catch than an explicit failure.
+
+- Belleair was WeatherNext's worst city at 4.9°F. Without Belleair, the WeatherNext six-city average drops to approximately 2.76°F, essentially tied with AIFS. A single coastal Florida city carries significant weight in a six-city warm-season sample.
+
+
+## What I'd do differently
+
+- The WeatherNext JSON needs a refresh strategy. Pre-computing a fixed window and serving it statically works for launch, but the rolling window drifts away from the JSON one day at a time. A scheduled weekly refresh would keep the comparison current without requiring a manual run.
+
+- Storing a snapshot of the AIFS scores at the time of the pipeline run would protect against archive instability. The current pipeline re-fetches from Open-Meteo on every page load, which means the displayed number can change if the archive is revised. Snapshotting the results the way WeatherNext is snapshotted would make all three models equally reproducible.
+
+- City selection for the pre-computed JSON should have been pre-registered before any city was run. Belleair was run as a pipeline verification before the prediction was written, which was disclosed, but the other five were not formally committed before selection. A pre-registered city list would have eliminated any selection bias question entirely.
+
+- The coordinate divergence between Nominatim geocoding in the live scoreboard and the stored coordinates in the JSON is a latent inconsistency. Both sets of coordinates fall in the same Open-Meteo grid cell in practice, but standardizing on one coordinate source throughout the pipeline would remove the risk entirely.

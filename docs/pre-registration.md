@@ -19,7 +19,7 @@ Regarding surprise thresholds, if GFS aggregate MAE comes back at 2.0 degrees Fa
 **Lead time:** +3 days  
 **Forecast source:** Open-Meteo Previous Runs API (GFS, AIFS); BigQuery WeatherNext ensemble mean via pre-computed JSON  
 **Observation source:** Iowa Mesonet ASOS hourly, closest observation to 18:00 UTC per date  
-**Metric:** Mean Absolute Error in degrees Fahrenheit, instantaneous 2m temperature at 18:00 UTC  
+**Metric:** Mean Absolute Error in °F, instantaneous 2m temperature at 18:00 UTC  
 **Cities:** Chicago IL, San Diego CA, Belleair FL, San Antonio TX, Denver CO, Seattle WA  
 **Window:** 30 days ending 4 days before run date
 

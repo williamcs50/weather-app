@@ -33,7 +33,7 @@ The project is complete when all of these are true:
 |---|---|---|
 | A: Access and data shape | Confirm access works, pull historic WeatherNext gridded data, and extract a point, fixed-lead forecast for a city | Hand-checked point forecasts for a few city-dates, proven against raw data |
 | B: Third lineage | Wire WeatherNext into the historic scoreboard, measured identically to GFS and AIFS, hand-check, and label honestly | WeatherNext live as a third column, same yardstick |
-| C: Compliance and close-out | Attribution and experimental-use disclaimer on the page, README and roadmap, and retrospective | Project closed clean |
+| C: Compliance and close-out | Attribution and experimental-use disclaimer on the page, README and roadmap, and retrospective | Project closed clean. Complete. |
 
 **Pace note.** Phase A carries the project's real unknown. WeatherNext is gridded scientific data on a cloud platform, not a simple JSON endpoint. If it cannot be measured the same way as the other two, that is a genuine finding that reshapes scope, not a failure.
 

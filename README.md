@@ -33,4 +33,6 @@ A pre-registration document (`docs/pre-registration.md`) was committed before ea
 - Phase 1: deterministic GFS vs. AIFS point forecast comparison. Complete.
 - Phase 2: ensemble means, confidence bands, and uncertainty chart. Complete.
 - Phase B: WeatherNext (GenCast v3) added to the accuracy scoreboard via BigQuery pre-computed JSON. Complete.
-- Phase C: attribution page, experimental-use disclaimer, retrospective. Planned.
+- Phase C: CC BY 4.0 attribution, experimental-use disclaimer, README and roadmap updated, retrospective. Complete.
+
+WeatherNext historic data only (forecasts more than 48 hours old), licensed under CC BY 4.0. No live or real-time WeatherNext data is used or displayed.

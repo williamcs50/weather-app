@@ -172,6 +172,10 @@ Bands: N/A
 
 - The verification discipline (hand-checks, pre-registration, independent ground truth) and the scope discipline carry forward to the next project.
 
+## Anything surprising or worth flagging
+
+- Nothing to flag. Done-criteria verification passed clean across all six items.
+
 
 # Thursday, June 11th (afternoon): WeatherNext Phase A kickoff
 
@@ -206,6 +210,10 @@ Bands: N/A
 - BigQuery access is to be confirmed against the actual dataset.
 
 - Historic point forecasts for a few city-dates are to be pulled and hand-checked against raw data.
+
+## Anything surprising or worth flagging
+
+- The comparability finding was not anticipated. WeatherNext has no daily maximum temperature variable. The only surface temperature output is instantaneous 6-hourly 2m temperature in Kelvin. This reshapes the measurement approach before any data has been pulled.
 
 
 # Friday, June 12th: WeatherNext Phase A continued
@@ -398,11 +406,11 @@ These results reflect a warm-season window only. A longer or cross-season sample
 
 - Complete the three open verification steps before anything else: eleven-point pipeline calibration, San Antonio raw-measurement confirmation, and all-three-coverage check on the aggregate sample. Close-out does not begin until all three pass.
 
-- Add attribution and experimental-use disclaimer to the page for WeatherNext
+- Add attribution and experimental-use disclaimer to the page for WeatherNext.
 
-- Update README and roadmap to mark Phase C in progress
+- Update README and roadmap to mark Phase C in progress.
 
-- Write the Phase B retrospective
+- Write the Phase B retrospective.
 
 ## Anything surprising or worth flagging
 
@@ -415,6 +423,10 @@ These results reflect a warm-season window only. A longer or cross-season sample
 - Belleair carries 17% of the WeatherNext six-city average and is WeatherNext's worst result at 5.1°F. Without Belleair, WeatherNext's average drops to approximately 2.76°F, essentially tied with AIFS. The six-city aggregate is sensitive to this one result and the small sample size should be kept in mind when reading the ranking.
 
 # Wednesday, June 17th: Phase B verification close-out and Mesonet bug fix
+
+## Pre-registration
+
+No new prediction. Phase B verification only.
 
 ## What landed today
 
@@ -446,6 +458,24 @@ Rankings are unchanged across both windows: AIFS first, WeatherNext second, GFS 
 
 Note: the old 29-day AIFS aggregate above (3.05°F) differs from the 2.77°F recorded on June 16 due to the Open-Meteo AIFS archive revision for Chicago. The June 16 number was correct at time of recording. The 3.05°F is what the archive returns today on the same dates.
 
+## What's open (carrying forward)
+
+- Nothing. All three verification tasks passed. The Mesonet bug is fixed and the AIFS archive revision is documented. Phase C is the next and final phase.
+
+## Result against prediction
+
+- N/A. Verification and bug fix only, no new measurement.
+
+## What's next
+
+- Phase C: add CC BY 4.0 attribution and experimental-use disclaimer to the page, update README and roadmap, and write the retrospective.
+
+## Anything surprising or worth flagging
+
+- The Mesonet exclusive end-date bug was silent. The API returned clean data for 29 dates with no error or warning. The only indication was a date count one short of 30.
+
+- The Open-Meteo AIFS archive revision was unexpected. An API described as serving forecasts as originally issued silently changed historical values between two queries 48 hours apart.
+
 ---
 
 # Wednesday, June 17th: Phase C compliance and close-out
@@ -456,20 +486,36 @@ No new prediction. Phase C is compliance and documentation only.
 
 ## What landed today
 
-- 
+- Added CC BY 4.0 attribution and experimental-use disclaimer to the page.
+
+- Moved "lower is better" into the metric label.
+
+- Updated README with AIFS archive stability note and licensing boundary sentence.
+
+- Updated roadmap to mark Phase C complete.
+
+- Wrote Phase B and C into the retrospective.
+
+- Verified all five charter done-criteria against the live page.
+
+- Closed [issue #6](https://github.com/williamcs50/weather-app/issues/6).
 
 ## What's open (carrying forward)
 
-- 
+- None. The project is closed.
 
 ## Result against prediction
 
-N/A
+- N/A (not a measurement day)
 
 ## What's next
 
-- 
+- Project closed. No active work. Standing maintenance item: WeatherNext JSON requires a manual refresh run periodically as the rolling window drifts forward. No scheduled date.
 
 ## Anything surprising or worth flagging
 
-- 
+- Found and fixed a Mesonet exclusive end-date bug that was silently dropping the last date from every city, reporting 29 days as 30 with no error.
+
+- Found that the Open-Meteo AIFS archive silently revised Chicago historical values between June 15 and June 17 with no changelog. Documented as a known upstream limitation rather than a pipeline fix.
+
+- WeatherNext finished second in the six-city aggregate, beating GFS. Pre-registration predicted the opposite ranking. Denver was the primary driver: GFS posted 5.4°F, WeatherNext posted 2.7°F. Complex terrain at the base of the Rockies appears to be a genuine weakness for GFS in this sample.
