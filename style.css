@@ -14,8 +14,15 @@ h1 {
   font-size: 1.4rem;
   font-weight: 600;
   letter-spacing: -0.01em;
-  margin-bottom: 1.25rem;
+  margin-bottom: 0.35rem;
   color: #111;
+}
+
+.tagline {
+  font-size: 0.95rem;
+  color: #555;
+  margin: 0 0 1.25rem;
+  font-weight: 400;
 }
 
 form {

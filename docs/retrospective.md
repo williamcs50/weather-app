@@ -80,3 +80,5 @@ Completed June 17, 2026. Added Google DeepMind WeatherNext (GenCast v3) as a thi
 - City selection for the pre-computed JSON should have been pre-registered before any city was run. Belleair was run as a pipeline verification before the prediction was written, which was disclosed, but the other five were not formally committed before selection. A pre-registered city list would have eliminated any selection bias question entirely.
 
 - The coordinate divergence between Nominatim geocoding in the live scoreboard and the stored coordinates in the JSON is a latent inconsistency. Both sets of coordinates fall in the same Open-Meteo grid cell in practice, but standardizing on one coordinate source throughout the pipeline would remove the risk entirely.
+
+- The next project's definition of done should include merge-to-main and live-site verification as explicit steps, not implied ones. At the end of Phase B, working results were on a branch that was not merged and not live. The code was correct but the project was not done in any meaningful sense. Deploy is part of done.
