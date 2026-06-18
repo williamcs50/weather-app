@@ -401,7 +401,7 @@ function renderForecast(nwsPeriods, aifsPeriods, city, state, ensembleData) {
       <div class="section-header-row">
         <div class="section-title">Model consensus</div>
         <div class="chart-legend">
-          <span class="leg-nws">— NWS</span>
+          <span class="leg-nws">— GFS</span>
           <span class="leg-aifs">— AIFS</span>
         </div>
       </div>
