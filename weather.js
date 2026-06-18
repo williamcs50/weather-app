@@ -640,11 +640,11 @@ function renderStormTracker(nwsPeriods, aifsPeriods) {
 
       let detail = '';
       if (tempDiff >= THRESHOLD) {
-        detail += `NWS predicts ${nws.temperature}°F; AIFS predicts ${aifs.temperature}°F (${tempDiff}°F difference)`;
+        detail += `GFS predicts ${nws.temperature}°F; AIFS predicts ${aifs.temperature}°F (${tempDiff}°F difference)`;
       }
       if (precipMismatch) {
         if (detail) detail += '. ';
-        detail += `NWS: ${nws.shortForecast}; AIFS: ${aifs.shortForecast}`;
+        detail += `GFS: ${nws.shortForecast}; AIFS: ${aifs.shortForecast}`;
       }
 
       return `
